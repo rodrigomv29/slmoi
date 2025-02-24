@@ -146,6 +146,8 @@ venv.bak/
 # Rope project settings
 .ropeproject
 
+lib64/
+pyvenv.cfg
 # mkdocs documentation
 /site
 

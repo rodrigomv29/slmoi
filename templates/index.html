@@ -1,0 +1,25 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Wrapper Chat</title>
+    <style>
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form method="post">
+            <textarea class="text-area" name="user_input" placeholder="Talk to Llama"></textarea>
+            <button class="button" type="submit">Send</button>
+        </form>
+        {% if user_input %}
+                <div class="response">
+                    <p>You: {{user_input}}</p>
+                    <p>Llama: {{lorem_ipsum_text}}</p>
+
+        </div>
+    </div>
+    
+</body>
+</html>
