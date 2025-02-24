@@ -19,8 +19,8 @@ def index():
     if request.method == "POST":
         user_input = request.form["user_input"]
         llama_output = get_llama_output(user_input)
-        lorem_ipsum_text = generate_lorem_ipsum_text()
-        return render_template("index.html", user_input=user_input, lorem_ipsum_text=lorem_ipsum_text)
+        # lorem_ipsum_text = generate_lorem_ipsum_text()
+        return render_template("index.html", user_input=user_input, llama_output=llama_output)
     return render_template("index.html")
 
 
@@ -28,7 +28,7 @@ def get_llama_output(user_input):
     api_request_json = {
         "model": "llama3.1-70b",
         "messages": [
-            {"role": "user", "content": "Explain the math behind money betting lines and what over/under means?"},
+            {"role": "user", "content": user_input},
         ]
     }
     # Execute the Request
@@ -37,4 +37,4 @@ def get_llama_output(user_input):
         print(json.dumps(response.json(), indent=2))
     except:
         print("\n\n\n\n\n " + response.text)
-        return response.json()
+        return response.json()["choices"]["message"]["content"]
