@@ -34,7 +34,8 @@ def get_llama_output(user_input):
     # Execute the Request
     response = llama.run(api_request_json)
     try:
-        print(json.dumps(response.json(), indent=2))
+        # print(json.dumps(response.json(), indent=2))
+        return response.json()["choices"][0]["message"]["content"]
     except:
         print("\n\n\n\n\n " + response.text)
-        return response.json()["choices"]["message"]["content"]
+        
