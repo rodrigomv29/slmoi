@@ -1,7 +1,9 @@
 from flask import Flask, request, render_template
+
 import os
 
 app = Flask(__name__)
+os.getenv("LLAMA_API")
 
 def generate_lorem_ipsum_text():
     # Generate lorem ipsum text
