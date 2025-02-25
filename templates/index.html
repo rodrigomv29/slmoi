@@ -60,7 +60,7 @@
         {% if user_input %}
             <div class="response">
                 <p>You: {{user_input}}</p>
-                <p>Llama: {{llama_output}}</p>
+                <p>Llama: {{llama_output | safe}}</p>
             </div>
         {% endif %}
     </div>
