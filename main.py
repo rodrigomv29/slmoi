@@ -34,7 +34,7 @@ def get_llama_output(user_input):
     # Execute the Request
     response = llama.run(api_request_json)
     # print(json.dumps(response.json(), indent=2))
-    return "None"
-    # return response.json()["choices"][0]["message"]["content"]
+    # return "None"
+    return response.json()["choices"][0]["message"]["content"]
     
         
