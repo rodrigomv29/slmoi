@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template
 from dotenv import load_dotenv
 import os
-import json
+import markdown
 from llamaapi import LlamaAPI
 
 app = Flask(__name__)
@@ -18,11 +18,11 @@ def generate_lorem_ipsum_text():
 def index():
     if request.method == "POST":
         user_input = request.form["user_input"]
-        llama_output = get_llama_output(user_input)
+        raw_output = get_llama_output(user_input)
+        llama_output = markdown.markdown(raw_output)
         # lorem_ipsum_text = generate_lorem_ipsum_text()
         return render_template("index.html", user_input=user_input, llama_output=llama_output)
     return render_template("index.html")
-
 
 def get_llama_output(user_input):
     api_request_json = {
