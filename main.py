@@ -1,11 +1,11 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, Response
 from dotenv import load_dotenv
 import os
 import markdown
 from llamaapi import LlamaAPI
 
 app = Flask(__name__)
-load_dotenv
+load_dotenv()
 api_key = os.getenv("LLAMA_API")
 llama = LlamaAPI(api_key)
 
@@ -18,10 +18,7 @@ def generate_lorem_ipsum_text():
 def index():
     if request.method == "POST":
         user_input = request.form["user_input"]
-        raw_output = get_llama_output(user_input)
-        llama_output = markdown.markdown(raw_output)
-        # lorem_ipsum_text = generate_lorem_ipsum_text()
-        return render_template("index.html", user_input=user_input, llama_output=llama_output)
+        return Response(stream_llama_output(user_input), mimetype="text/html")
     return render_template("index.html")
 
 def get_llama_output(user_input):
@@ -36,5 +33,10 @@ def get_llama_output(user_input):
     # print(json.dumps(response.json(), indent=2))
     # return "None"
     return response.json()["choices"][0]["message"]["content"]
+def stream_llama_output(user_input):
+    raw_output = get_llama_output(user_input)
+    markdown_output = markdown.markdown(raw_output)
+    yield markdown_output
+
     
         
