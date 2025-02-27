@@ -18,7 +18,9 @@ def generate_lorem_ipsum_text():
 def index():
     if request.method == "POST":
         user_input = request.form["user_input"]
-        return Response(stream_llama_output(user_input), mimetype="text/html")
+        raw_output = get_llama_output(user_input)
+        llama_output = markdown.markdown(raw_output)
+        return render_template("index.html", user_input=user_input, llama_output=llama_output)
     return render_template("index.html")
 
 def get_llama_output(user_input):
