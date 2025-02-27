@@ -2,3 +2,4 @@ flask
 python-dotenv
 llamaapi
 markdown
+openai
