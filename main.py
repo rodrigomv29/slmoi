@@ -5,6 +5,7 @@ import markdown
 from openai import OpenAI
 app = Flask(__name__)
 
+client = OpenAI()
 
 def generate_lorem_ipsum_text():
     # Generate lorem ipsum text
@@ -13,6 +14,6 @@ def generate_lorem_ipsum_text():
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    return "HELLO WORLD!"
+    return "<p>Hello!</p>"
 
         
