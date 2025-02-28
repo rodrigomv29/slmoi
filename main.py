@@ -17,13 +17,7 @@ def generate_lorem_ipsum_text():
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    if request.method == "POST":
-        user_input = request.form["user_input"]
-        # lorem = generate_lorem_ipsum_text()
-        raw_output = get_llama_output(user_input)
-        llama_output = markdown.markdown(raw_output)
-        return render_template("index.html", user_input=user_input, llama_output=llama_output)
-    return render_template("index.html")
+    return "HELLO WORLD!"
 
 def get_llama_output(user_input):
     completion = llama.chat.completions.create(
