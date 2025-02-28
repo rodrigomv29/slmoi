@@ -11,6 +11,7 @@ def get_news_headlines(category):
     modified_url = url
     modified_url += f"&category={category}"
     response = requests.get(modified_url)
+    result = []
     for i in range(len(response.json()['articles'])):
-        print(response.json()["articles"][i]['title'])
-get_news_headlines("business")
+        result.append(response.json()["articles"][i]['title'])
+    return result
