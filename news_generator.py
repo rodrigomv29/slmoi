@@ -6,6 +6,12 @@ from dotenv import load_dotenv
 load_dotenv()
 api_key = os.getenv("NEWS_API")
 url = f"https://newsapi.org/v2/top-headlines?country=us&apiKey={api_key}"
-response = requests.get(url)
-for i in range(len(response.json()['articles'])):
-    print(response.json()["articles"][i]['title'])
+
+def get_news_headlines(category):
+    modified_url = url
+    modified_url += f"&category={category}"
+    response = requests.get(modified_url)
+    result = []
+    for i in range(len(response.json()['articles'])):
+        result.append(response.json()["articles"][i]['title'])
+    return result
