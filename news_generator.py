@@ -25,7 +25,10 @@ def get_news_headlines(category):
     result = []
     for i in range(len(response.json()['articles'])):
         result.append(response.json()["articles"][i]['title'])
-    return str(result)
+    
+    return str(result) + "\n\n**END OF LIST**\n\n"
+
+
 
 
 
