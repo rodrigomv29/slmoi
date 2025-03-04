@@ -4,6 +4,11 @@ import os
 import markdown
 from openai import OpenAI
 app = Flask(__name__)
+load_dotenv()
+api_key = os.getenv("LLAMA_API")
+base_url = "https://api.llama-api.com"
+client = OpenAI()
+print(help(client))
 
 def generate_lorem_ipsum_text():
     # Generate lorem ipsum text
