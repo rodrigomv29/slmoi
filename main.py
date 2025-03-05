@@ -8,6 +8,9 @@ load_dotenv()
 api_key = os.getenv("LLAMA_API")
 base_url = "https://api.llama-api.com"
 client = OpenAI()
+"""
+OPENAI.openai error
+"""
 print(help(client))
 
 def generate_lorem_ipsum_text():
