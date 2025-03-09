@@ -18,6 +18,11 @@ def generate_lorem_ipsum_text():
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    return "<p>Hello!</p>"
+    if request.method == "POST":
+        user_input = request.form["user_input"]
+        lorem_ipsum_text = generate_lorem_ipsum_text()
+        return render_template("index.html", user_input=user_input, lorem_ipsum_text=lorem_ipsum_text)
+    return render_template("index.html")
+
 
         
