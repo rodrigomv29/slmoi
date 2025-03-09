@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, Response
+from flask import Flask, request, render_template, redirect, url_for
 from dotenv import load_dotenv
 import os
 import markdown
@@ -22,7 +22,7 @@ def index():
         user_input = request.form["user_input"]
         lorem_ipsum_text = generate_lorem_ipsum_text()
         return render_template("index.html", user_input=user_input, lorem_ipsum_text=lorem_ipsum_text)
-    return render_template("index.html")
-
+    else:
+        return redirect(url_for('index'))
 
         
