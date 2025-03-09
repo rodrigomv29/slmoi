@@ -2,12 +2,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LLM Wrapper Chat</title>
+    <title>Simple LLM Wrapper Chat</title>
     <style>
         body {
             background-color: #2f2f2f;
             color: #ffffff;
             font-family: Arial, sans-serif;
+        }
+        .sidebar {
+            width: 20%;
+            float: left;
+            padding: 20px;
+            background-color: #3a3a3a;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            margin: 10px 0;
+        }
+        .sidebar ul li a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .sidebar ul li a:hover {
+            text-decoration: underline;
         }
         .container {
             width: 50%;
@@ -52,6 +75,14 @@
     </style>
 </head>
 <body>
+    <div class="sidebar">
+        <h2>Chat Histories</h2>
+        <ul>
+            <li><a href="#">Chat 1</a></li>
+            <li><a href="#">Chat 2</a></li>
+            <li><a href="#">Chat 3</a></li>
+        </ul>
+    </div>
     <div class="container">
         <h1>Form can only handle simple questions due to memory constraints</h1>
         <form method="post">
