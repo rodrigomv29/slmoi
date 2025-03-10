@@ -85,8 +85,9 @@
     </div>
     <div class="container">
         <h1>Form can only handle simple questions due to memory constraints</h1>
-        <form method="post">
+        <form method="post" action="/submit">
             <textarea class="text-area" name="user_input" placeholder="Talk to Llama"></textarea>
+            <input type="hidden" name="user_name" value="guest">
             <button class="button" type="submit">Send</button>
         </form>
         {% if user_input %}
