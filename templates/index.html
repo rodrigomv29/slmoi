@@ -85,7 +85,7 @@
     </div>
     <div class="container">
         <h1>Form can only handle simple questions due to memory constraints</h1>
-        <form method="post" action="/submit">
+        <form method="post">
             <textarea class="text-area" name="user_input" placeholder="Talk to Llama"></textarea>
             <input type="hidden" name="user_name" value="guest">
             <button class="button" type="submit">Send</button>
@@ -93,7 +93,7 @@
         {% if user_input %}
             <div class="response">
                 <p>You: {{user_input}}</p>
-                <p>Llama: {{lorem_ipsum_text | safe}}</p>
+                <p>Llama: {{llama_output | safe}}</p>
             </div>
         {% endif %}
     </div>
