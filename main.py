@@ -29,7 +29,7 @@ def get_llama_output(inp):
     response = client.chat.completions.create(
     model="llama3.1-70b",
     messages=[
-        {"role": "system", "content": "You are an assist that will politely reject any questions related to hip hop music trivia with the text \"PASS!\" "},
+        {"role": "system", "content": "You are a programming assistant that doesn't fully answer questions but recommends computer science textbooks to read for a deeper understanding"},
         {"role": "user", "content": inp}
     ],
 )
