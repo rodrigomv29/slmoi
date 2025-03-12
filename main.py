@@ -15,7 +15,7 @@ base_url = "https://api.llama-api.com"
 )
 
 def init_db():
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect('prompts.db')
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS user_inputs
                  (id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -42,21 +42,26 @@ def index():
         user_input = request.form["user_input"]
         llama_output = get_llama_output(user_input)
         user_name = request.form['user_name']
-
-        """
+        if request.form['function_calling'] == "Weather":
+            print("WEATHER!!")
+        if request.form['function_calling'] == "News":
+            print("NEWS!!")
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
         conn = sqlite3.connect('prompts.db')
         c = conn.cursor()
-        c.execute("INSERT INTO user_inputs (input_text, date, user_name) VALUES (?, ?, ?)",
-                  (user _input, date, user_name))
+        c.execute("""INSERT INTO user_inputs (input_text, date, user_name) VALUES (?, ?, ?)""",
+                  (user_input, date, user_name))
         conn.commit()
-        conn.close()"
-        """
+        conn.close()
 
         return render_template('index.html', user_input=user_input, llama_output=llama_output)
     else:
-        return render_template('index.html')
+        conn = sqlite3.connect('prompts.db')
+        c = conn.cursor()
+        c.execute("SELECT * FROM user_inputs")
+        rows = c.fetchall()
+        conn.close()
+        return render_template('index.html', rows=rows)
 
 if __name__ == '__main__':
     init_db()

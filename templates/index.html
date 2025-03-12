@@ -96,7 +96,7 @@
         <h1>Form can only handle simple questions due to memory constraints</h1>
         <form method="post">
             <textarea class="text-area" name="user_input" placeholder="Talk to Llama"></textarea>
-            <input type="hidden" name="user_name" value="guest">
+            <input type="text" name="user_name" value="guest">
             <div class="radio-buttons">
                 <input type="radio" id="news" name="function_calling" value="News">
                 <label for="news">News</label>
@@ -111,6 +111,9 @@
                 <p>Llama: {{llama_output | safe}}</p>
             </div>
         {% endif %}
+    </div>
+    <div class="row-inputs">
+        <p>{{rows}}</p>
     </div>
 </body>
 </html>
