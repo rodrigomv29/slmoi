@@ -37,7 +37,29 @@ tools = [{
                 },
                 "required": ["category"],
                 "additionalProperties": False
-        },
+            },
+        "strict": True
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_current_weather",
+            "description": "Get current weather given a longitude and latitude",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "longitude": {
+                        "type": "float"
+                    },
+                    "latitude": {
+                        "type": "float"
+                    }
+                ,
+                }
+                "required": ["longitude", "langitude"],
+                "additionalProperties": False
+            },
         "strict": True
         }
     }
