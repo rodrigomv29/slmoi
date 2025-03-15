@@ -5,8 +5,9 @@ import news_generator
 import json
 load_dotenv()
 
+
 if __name__ == "__main__":
-        
+
     openai_api_key = os.getenv("OPENAI_API_KEY")
 
     client = OpenAI(

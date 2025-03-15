@@ -4,6 +4,7 @@ import os
 import sqlite3
 from datetime import datetime
 from openai import OpenAI
+import function_calling
 
 app = Flask(__name__)
 load_dotenv()
@@ -25,27 +26,34 @@ def init_db():
     conn.commit()
     conn.close()
 
-def get_llama_output(inp):
-    response = client.chat.completions.create(
-    model="llama3.1-70b",
-    messages=[
-        {"role": "system", "content": "You are a programming assistant that doesn't fully answer questions but recommends computer science textbooks to read for a deeper understanding"},
-        {"role": "user", "content": inp}
-    ],
-)
-    return response.choices[0].message.content
+def get_llama_output(inp, fun_call):
+    if fun_call == 1:
+        response = client.chat.completions.create(
+        model="llama3.1-70b",
+        messages=[
+            {"role": "system", "content": "You are a programming assistant that doesn't fully answer questions but recommends computer science textbooks to read for a deeper understanding"},
+            {"role": "user", "content": inp}
+        ],
+    )
+        return response.choices[0].message.content
+    elif fun_call==2:
+        # refer to function_calling.py
+        pass
+    elif fun_call==3:
+        # refer to function_calling.py
+        pass
 
 
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
         user_input = request.form["user_input"]
-        llama_output = get_llama_output(user_input)
         user_name = request.form['user_name']
         if request.form['function_calling'] == "Weather":
             print("WEATHER!!")
         if request.form['function_calling'] == "News":
             print("NEWS!!")
+        llama_output = get_llama_output(user_input, fun_call=1 )
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         conn = sqlite3.connect('prompts.db')
         c = conn.cursor()
