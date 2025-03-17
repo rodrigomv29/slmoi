@@ -19,7 +19,6 @@ ENV PORT 8080
 EXPOSE ${PORT}
 
 # Define environment variables
-ENV OPENAI_API_KEY LA-d021098ef5fb4795bd48297a85b35aba89e20a82b8d0485e801bf09f79f547d5
 
 # Run ./main.py when the container launches
 CMD ["python", "./main.py"]
