@@ -151,6 +151,8 @@ pyvenv.cfg
 # mkdocs documentation
 /site
 
+# database
+prompts.db
 # mypy
 .mypy_cache/
 .dmypy.json
