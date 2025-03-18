@@ -177,6 +177,6 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-dockerfile
+Dockerfile
 
 ##please remove dockerfile
