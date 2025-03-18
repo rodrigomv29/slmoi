@@ -178,4 +178,5 @@ cython_debug/
 .pypirc
 
 ./Dockerfile
+Dockerfile
 ##please remove dockerfile
