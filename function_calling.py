@@ -4,7 +4,9 @@ import os
 import news_generator
 import json
 load_dotenv()
-
+"""
+initial commit
+"""
 
 if __name__ == "__main__":
 
