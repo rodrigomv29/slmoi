@@ -1,2 +1,2 @@
-# llm-wrapper
-llm wrapper project
+# slmoi
+A simple llm wrapper
