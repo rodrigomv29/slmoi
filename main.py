@@ -9,11 +9,6 @@ import function_calling
 app = Flask(__name__)
 load_dotenv()
 api_key = os.getenv("LLAMA_API")
-base_url = "https://api.llama-api.com"
-client = OpenAI(
-api_key = api_key,
-base_url = "https://api.llama-api.com"
-)
 
 def init_db():
     conn = sqlite3.connect('prompts.db')
@@ -26,6 +21,7 @@ def init_db():
     conn.commit()
     conn.close()
 
+"""
 def get_llama_output(inp, fun_call):
     if fun_call == 1:
         response = client.chat.completions.create(
@@ -43,7 +39,10 @@ def get_llama_output(inp, fun_call):
         # refer to function_calling.py
         pass
 
+"""
 
+def get_llorem_ipsum():
+    return "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
