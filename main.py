@@ -14,7 +14,4 @@ api_key = os.getenv("LLAMA_API")
 def index():
     return "<h1>Hello World!</h1>"
 if __name__ == '__main__':
-     print(type(app))
-     l = app.run(debug=True)
-     print("hello world!")
-
+     app.run(debug=True)
