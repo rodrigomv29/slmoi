@@ -52,7 +52,7 @@ def index():
             print("WEATHER!!")
         if request.form['function_calling'] == "News":
             print("NEWS!!")
-        llama_output = get_llama_output(user_input, fun_call=1 )
+        llama_output = get_llorem_ipsum()
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         conn = sqlite3.connect('prompts.db')
         c = conn.cursor()
