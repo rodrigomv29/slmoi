@@ -1,4 +1,4 @@
-import os
+"""import os
 import requests
 from os.path import join, dirname
 from dotenv import load_dotenv
@@ -33,13 +33,8 @@ def get_news_headlines(category):
 
 
 if __name__ == "__main__":
-    print(get_news_headlines("business"))
-    print(get_news_headlines("entertainment"))
-    print(get_news_headlines("general"))
-    print(get_news_headlines("health"))
-    print(get_news_headlines("science"))
-    print(get_news_headlines("sports"))
-    print(get_news_headlines("technology"))
+    choice_str="**\n\n\nChoose a number to get specific news category***\n\n\n1."
 
     
 
+"""

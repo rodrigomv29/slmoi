@@ -1,12 +1,11 @@
+"""
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
 import news_generator
 import json
 load_dotenv()
-"""
 initial commit
-"""
 
 if __name__ == "__main__":
 
@@ -97,4 +96,4 @@ if __name__ == "__main__":
             tools=tools,
         )
 
-        print(completion_2.choices[0])
+        print(completion_2.choices[0])"""
