@@ -1,5 +1,2 @@
 flask
-python-dotenv
-llamaapi
-markdown
-openai
+gunicorn
