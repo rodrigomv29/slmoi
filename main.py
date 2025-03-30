@@ -17,4 +17,5 @@ base_url = "https://api.llama-api.com"
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    print("Works?")
     return "<h1>Hello World!</h1>"
