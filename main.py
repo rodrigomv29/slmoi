@@ -7,8 +7,8 @@ from openai import OpenAI
 import function_calling
 
 app = Flask(__name__)
-load_dotenv()
-api_key = os.getenv("LLAMA_API")
+# load_dotenv()
+api_key = os.getenv("OPENAI_API_KEY")
 base_url = "https://api.llama-api.com"
 client = OpenAI(
 api_key = api_key,
