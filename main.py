@@ -10,10 +10,11 @@ app = Flask(__name__)
 load_dotenv()
 api_key = os.getenv("LLAMA_API")
 base_url = "https://api.llama-api.com"
-client = OpenAI(
+"""client = OpenAI(
 api_key = api_key,
 base_url = "https://api.llama-api.com"
 )
+"""
 
 def init_db():
     conn = sqlite3.connect('prompts.db')
@@ -71,8 +72,5 @@ def index():
         conn.close()
         return render_template('index.html', rows=rows)
 
-if __name__ == '__main__':
-    init_db()
-    app.run(debug=True)
 
 
