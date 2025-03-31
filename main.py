@@ -78,7 +78,6 @@ def insert_prompt_input(base, inp, d, uname):
             c.execute("INSERT INTO user_inputs (input_text, date, user_name) VALUES (?, ?, ?)",
                     (inp, d, uname))
             conn.commit()
-            conn.close()
 def select_prompts(base):
     db_path = os.path.join(base, "prompts.db")
         # if database is closed
@@ -86,7 +85,6 @@ def select_prompts(base):
         c = conn.cursor()
         c.execute("SELECT * FROM user_inputs")
         rows = c.fetchall()
-        conn.close()
     return rows
 
 
