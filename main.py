@@ -45,7 +45,6 @@ def get_llama_output(inp, fun_call):
         # refer to function_calling.py
         pass
 
-
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
@@ -58,25 +57,32 @@ def index():
         llama_output = get_llama_output(user_input, fun_call=1 )
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        db_path = os.path.join(BASE_DIR, "prompts.db")
+        insert_prompt_input(BASE_DIR, user_input, date, user_name)
+        return render_template('index.html', user_input=user_input, llama_output=llama_output)
+    else:
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        rows = select_prompts(BASE_DIR)
+        return render_template('index.html', rows=rows)
+        
+def insert_prompt_input(base, inp, d, uname):
+        db_path = os.path.join(base, "prompts.db")
         with sqlite3.connect(db_path) as conn:        
             c = conn.cursor()
             c.execute("INSERT INTO user_inputs (input_text, date, user_name) VALUES (?, ?, ?)",
-                    (user_input, date, user_name))
+                    (inp, d, uname))
             conn.commit()
             conn.close()
-            return render_template('index.html', user_input=user_input, llama_output=llama_output)
-    else:
-        init_db()
-        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        db_path = os.path.join(BASE_DIR, "prompts.db")
-        with sqlite3.connect(db_path) as conn:
-            c = conn.cursor()
-            c.execute("SELECT * FROM user_inputs")
-            rows = c.fetchall()
-            conn.close()
-            return render_template('index.html', rows=rows)
-        
+def select_prompts(base):
+    db_path = os.path.join(base, "prompts.db")
+        # if database is closed
+    with sqlite3.connect(db_path) as conn:
+        c = conn.cursor()
+        c.execute("SELECT * FROM user_inputs")
+        rows = c.fetchall()
+        conn.close()
+    return rows
+
+
 
 if __name__ == '__main__':
     init_db()
