@@ -67,6 +67,7 @@ def index():
             conn.close()
             return render_template('index.html', user_input=user_input, llama_output=llama_output)
     else:
+        init_db()
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         db_path = os.path.join(BASE_DIR, "prompts.db")
         with sqlite3.connect(db_path) as conn:
