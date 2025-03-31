@@ -14,7 +14,7 @@ client = OpenAI(
 api_key = api_key,
 base_url = "https://api.llama-api.com"
 )
-
+"""
 def init_db():
     conn = sqlite3.connect('prompts.db')
     c = conn.cursor()
@@ -25,7 +25,7 @@ def init_db():
                   user_name TEXT DEFAULT 'guest')''')
     conn.commit()
     conn.close()
-
+"""
 def get_llama_output(inp, fun_call):
     if fun_call == 1:
         response = client.chat.completions.create(
@@ -55,24 +55,27 @@ def index():
             print("NEWS!!")
         llama_output = get_llama_output(user_input, fun_call=1 )
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        conn = sqlite3.connect('prompts.db')
+        """conn = sqlite3.connect('prompts.db')
         c = conn.cursor()
-        c.execute("""INSERT INTO user_inputs (input_text, date, user_name) VALUES (?, ?, ?)""",
+        c.execute("INSERT INTO user_inputs (input_text, date, user_name) VALUES (?, ?, ?)",
                   (user_input, date, user_name))
         conn.commit()
         conn.close()
+        """
 
         return render_template('index.html', user_input=user_input, llama_output=llama_output)
-    else:
-        conn = sqlite3.connect('prompts.db')
+    return render_template('index.html')
+    #else:
+"""conn = sqlite3.connect('prompts.db')
         c = conn.cursor()
         c.execute("SELECT * FROM user_inputs")
         rows = c.fetchall()
         conn.close()
-        return render_template('index.html', rows=rows)
+        return render_template('index.html', rows=rows)"
+        """
 
 if __name__ == '__main__':
-    init_db()
+    # init_db()
     app.run(debug=True)
 
 
