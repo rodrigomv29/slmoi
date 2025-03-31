@@ -57,7 +57,11 @@ def index():
         llama_output = get_llama_output(user_input, fun_call=1 )
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        insert_prompt_input(BASE_DIR, user_input, date, user_name)
+        try:
+            insert_prompt_input(BASE_DIR, user_input, date, user_name)
+        except:
+            init_db()
+            insert_prompt_input(BASE_DIR, user_input, date, user_name)
         return render_template('index.html', user_input=user_input, llama_output=llama_output)
     else:
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
