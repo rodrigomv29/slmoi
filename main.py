@@ -61,7 +61,11 @@ def index():
         return render_template('index.html', user_input=user_input, llama_output=llama_output)
     else:
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        rows = select_prompts(BASE_DIR)
+        try:
+            rows = select_prompts(BASE_DIR)
+        except sqlite3.OperationalError:
+            init_db()
+            rows = select_prompts(BASE_DIR)
         return render_template('index.html', rows=rows)
         
 def insert_prompt_input(base, inp, d, uname):
