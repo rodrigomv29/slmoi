@@ -26,7 +26,6 @@ def init_db():
                     date TEXT NOT NULL,
                     user_name TEXT DEFAULT 'guest')''')
         conn.commit()
-        conn.close()
 
 def get_llama_output(inp, fun_call):
     if fun_call == 1:
@@ -95,5 +94,3 @@ def select_prompts(base):
 if __name__ == '__main__':
     init_db()
     app.run(debug=True)
-
-
