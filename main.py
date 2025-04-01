@@ -27,15 +27,21 @@ def init_db():
                     user_name TEXT DEFAULT 'guest')''')
         conn.commit()
 
-def get_llama_output(inp, fun_call):
+def get_llama_output(inp, fun_call, user_name, conversation_history=None):
+    if conversation_history is None:
+        conversation_history = []
+    conversation_history.append({"role": "user", "content": inp})
+
     if fun_call == 1:
+        role_system = [ {"role": "system", "content": "You are a helpful assistant that answer questions in a grandiloquent  way"},]
         response = client.chat.completions.create(
         model="llama3.1-70b",
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant that answer questions in a grandiloquent  way"},
-            {"role": "user", "content": inp}
-        ],
-    )
+        messages=role_system.extend(conversation_history),
+        )
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        outp = response.choices[0].message.content
+        insert_conversation_history(BASE_DIR, inp, date, user_name, outp)
         return response.choices[0].message.content
     elif fun_call==2:
         # refer to function_calling.py
@@ -53,7 +59,7 @@ def index():
             print("WEATHER!!")
         if request.form.get("News"):
             print("NEWS!!")
-        llama_output = get_llama_output(user_input, fun_call=1 )
+        llama_output = get_llama_output(user_input, user_name, fun_call=1 )
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         try:
@@ -70,7 +76,16 @@ def index():
             init_db()
             rows = select_prompts(BASE_DIR)
         return render_template('index.html', rows=rows)
-        
+def insert_conversation_history(base, inp, d, uname, output):
+        db_path = os.path.join(base, "conversations.db")
+        with sqlite3.connect(db_path) as conn:        
+            c = conn.cursor()
+            # TO BE COMPLETED: WRITE A TABLE THAT STORES CONVERSARTIONS, TEXT, and AI OUTPUT
+            c.execute("INSERT INTO user_conversations (input_text, date, user_name, output) VALUES (?, ?, ?, ?)",
+                    (inp, d, uname, output))
+            conn.commit()
+
+
 def insert_prompt_input(base, inp, d, uname):
         db_path = os.path.join(base, "prompts.db")
         with sqlite3.connect(db_path) as conn:        
