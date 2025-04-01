@@ -43,7 +43,7 @@ def get_llama_output(inp, fun_call, user_name, conversation_history=None):
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         outp = response.choices[0].message.content
         insert_conversation_history(BASE_DIR, inp, date, user_name, outp)
-        return response.choices[0].message.content
+        return outp
     elif fun_call==2:
         # refer to function_calling.py
         pass
@@ -79,12 +79,25 @@ def index():
         return render_template('index.html', rows=rows)
 def insert_conversation_history(base, inp, d, uname, output):
         db_path = os.path.join(base, "conversations.db")
-        with sqlite3.connect(db_path) as conn:        
+        try:
+            with sqlite3.connect(db_path) as conn:        
+                c = conn.cursor()
+                # TO BE COMPLETED: WRITE A TABLE THAT STORES CONVERSARTIONS, TEXT, and AI OUTPUT
+                c.execute("INSERT INTO user_conversations (input_text, date, user_name, output) VALUES (?, ?, ?, ?)",
+                    (inp, d, uname, output))
+                conn.commit()
+        except sqlite3.OperationalError:
             c = conn.cursor()
-            # TO BE COMPLETED: WRITE A TABLE THAT STORES CONVERSARTIONS, TEXT, and AI OUTPUT
-            c.execute("INSERT INTO user_conversations (input_text, date, user_name, output) VALUES (?, ?, ?, ?)",
+            # TODO: WRITE A TABLE THAT STORES CONVERSARTIONS, TEXT, and AI OUTPUT
+            c.execute('''CREATE TABLE IF NOT EXISTS conversation
+                    (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    input_text TEXT NOT NULL,
+                    output TEXT NOT NULL,
+                    date TEXT NOT NULL,
+                    user_name TEXT DEFAULT 'guest')''',
                     (inp, d, uname, output))
             conn.commit()
+
 
 def insert_prompt_input(base, inp, d, uname):
         db_path = os.path.join(base, "prompts.db")
