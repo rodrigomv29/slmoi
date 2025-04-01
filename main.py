@@ -28,6 +28,7 @@ def init_db():
         conn.commit()
 
 def get_llama_output(inp, fun_call, user_name, conversation_history=None):
+    # TODO: ADD MECHANISM TO LOAD CONVERSATION HISTORY FROM SPECIFIC USER 
     if conversation_history is None:
         conversation_history = []
     conversation_history.append({"role": "user", "content": inp})
@@ -85,7 +86,6 @@ def insert_conversation_history(base, inp, d, uname, output):
                     (inp, d, uname, output))
             conn.commit()
 
-
 def insert_prompt_input(base, inp, d, uname):
         db_path = os.path.join(base, "prompts.db")
         with sqlite3.connect(db_path) as conn:        
@@ -101,9 +101,6 @@ def select_prompts(base):
         c.execute("SELECT * FROM user_inputs")
         rows = c.fetchall()
     return rows
-
-
-
 if __name__ == '__main__':
     init_db()
     app.run(debug=True)
