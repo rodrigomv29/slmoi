@@ -37,7 +37,10 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None):
         role_system = [ {"role": "system", "content": "You are a helpful assistant that answer questions in a grandiloquent  way"},]
         response = client.chat.completions.create(
         model="llama3.1-70b",
-        messages=role_system.extend(conversation_history),
+        messages=[
+             {"role": "system", "content": "You are a helpful assistant that answer questions in a grandiloquent  way"},
+             {"role": "user", "content": inp}
+         ],
         )
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
