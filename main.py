@@ -27,7 +27,7 @@ def init_db():
                     user_name TEXT DEFAULT 'guest')''')
         conn.commit()
 
-def get_llama_output(inp, fun_call, user_name, conversation_history=None):
+def get_llama_output(inp, user_name, fun_call=1, conversation_history=None):
     # TODO: ADD MECHANISM TO LOAD CONVERSATION HISTORY FROM SPECIFIC USER 
     if conversation_history is None:
         conversation_history = []
@@ -60,7 +60,7 @@ def index():
             print("WEATHER!!")
         if request.form.get("News"):
             print("NEWS!!")
-        llama_output = get_llama_output(user_input, user_name, fun_call=1 )
+        llama_output = get_llama_output(user_input, user_name )
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         try:
