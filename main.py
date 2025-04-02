@@ -86,7 +86,7 @@ def insert_conversation_history(base, inp, d, uname, output):
             with sqlite3.connect(db_path) as conn:        
                 c = conn.cursor()
                 # TO BE COMPLETED: WRITE A TABLE THAT STORES CONVERSARTIONS, TEXT, and AI OUTPUT
-                c.execute("INSERT INTO user_conversations (input_text, date, user_name, output) VALUES (?, ?, ?, ?)",
+                c.execute("INSERT INTO conversation (input_text, output, date, user_name) VALUES (?, ?, ?, ?)",
                     (inp, d, uname, output))
                 conn.commit()
         except sqlite3.OperationalError:
