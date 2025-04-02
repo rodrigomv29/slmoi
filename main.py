@@ -34,7 +34,7 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None):
     conversation_history.append({"role": "user", "content": inp})
 
     if fun_call == 1:
-        role_system = [ {"role": "system", "content": "You are a helpful assistant that answer questions in a grandiloquent  way"},]
+        # role_system = [ {"role": "system", "content": "You are a helpful assistant that answer questions in a grandiloquent  way"},]
         response = client.chat.completions.create(
         model="llama3.1-70b",
         messages=[
