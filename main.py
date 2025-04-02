@@ -100,7 +100,7 @@ def insert_conversation_history(base, inp, d, uname, output):
                     user_name TEXT DEFAULT 'guest')''',
                     )
             c.execute('''
-                      INSERT INTO user_conversations (input_text, output, date, user_name) VALUES (?, ?, ?, ?)
+                      INSERT INTO conversation (input_text, output, date, user_name) VALUES (?, ?, ?, ?)
                       
             ''', (inp, output, d, uname))
             conn.commit()
