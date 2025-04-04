@@ -125,7 +125,11 @@ def select_prompts(base):
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    return render_template()
+    return render_template("register.html")
+
+@app.route("/signin", methods=["GET", "POST"])
+def sign_in():
+    return render_template("signin.html")
 
 if __name__ == '__main__':
     init_db()
