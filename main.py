@@ -27,6 +27,8 @@ def init_db():
                     user_name TEXT DEFAULT 'guest')''')
         conn.commit()
 
+#TODO DEFINE A FUNCTION WHERE USER CAN CUSTOMIZE 
+
 def get_llama_output(inp, user_name, fun_call=1, conversation_history=None):
     # TODO: ADD MECHANISM TO LOAD CONVERSATION HISTORY FROM SPECIFIC USER 
     if conversation_history is None:
