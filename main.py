@@ -122,6 +122,11 @@ def select_prompts(base):
         c.execute("SELECT * FROM user_inputs")
         rows = c.fetchall()
     return rows
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    return render_template()
+
 if __name__ == '__main__':
     init_db()
     app.run(debug=True)
