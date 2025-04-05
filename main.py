@@ -32,7 +32,7 @@ def init_db():
 #TODO GET OPENAICLIENT INFO
 
 def get_client_info(client):
-    return client
+    return client.usage.total_tokens
 
 def get_llama_output(inp, user_name, fun_call=1, conversation_history=None):
     # TODO: ADD MECHANISM TO LOAD CONVERSATION HISTORY FROM SPECIFIC USER 
