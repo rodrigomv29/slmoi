@@ -29,6 +29,11 @@ def init_db():
 
 #TODO DEFINE A FUNCTION WHERE USER CAN CUSTOMIZE 
 
+#TODO GET OPENAICLIENT INFO
+
+def get_client_info(client):
+    return client
+
 def get_llama_output(inp, user_name, fun_call=1, conversation_history=None):
     # TODO: ADD MECHANISM TO LOAD CONVERSATION HISTORY FROM SPECIFIC USER 
     if conversation_history is None:
@@ -48,6 +53,7 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None):
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         outp = response.choices[0].message.content
         insert_conversation_history(BASE_DIR, inp, date, user_name, outp)
+        print(get_client_info(response))
         return outp
     elif fun_call==2:
         # refer to function_calling.py
