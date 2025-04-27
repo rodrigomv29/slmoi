@@ -187,3 +187,5 @@ cython_debug/
 
 #DOCKERFILE
 Dockerfile
+
+.vscode
