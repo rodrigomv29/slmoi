@@ -1,4 +1,4 @@
-"""import os
+import os
 import requests
 from os.path import join, dirname
 from dotenv import load_dotenv
@@ -28,13 +28,6 @@ def get_news_headlines(category):
     
     return str(result) + "\n\n**END OF LIST**\n\n"
 
-
-
-
-
 if __name__ == "__main__":
-    choice_str="**\n\n\nChoose a number to get specific news category***\n\n\n1."
-
+    print(get_news_headlines("business"))
     
-
-"""
