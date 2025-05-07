@@ -29,5 +29,5 @@ def get_news_headlines(category):
     return str(result) + "\n\n**END OF LIST**\n\n"
 
 if __name__ == "__main__":
-    print(get_news_headlines("business"))
+    print(get_news_headlines("general"))
     
