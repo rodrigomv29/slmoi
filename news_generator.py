@@ -2,6 +2,8 @@ import os
 import requests
 from os.path import join, dirname
 from dotenv import load_dotenv
+import datetime
+
 
 # NEWSAPI CLASS
 
@@ -29,5 +31,7 @@ def get_news_headlines(category):
     return str(result) + "\n\n**END OF LIST**\n\n"
 
 if __name__ == "__main__":
+    current_time = datetime.datetime.now()
+    print(current_time)
     print(get_news_headlines("general"))
     
