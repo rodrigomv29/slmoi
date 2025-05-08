@@ -135,6 +135,10 @@ def register():
 
 @app.route("/signin", methods=["GET", "POST"])
 def sign_in():
+    pw = request.form.get("password")
+    un = request.form.get('user-name')
+    print(un)
+    print(pw)
     return render_template("signin.html")
 
 if __name__ == '__main__':
