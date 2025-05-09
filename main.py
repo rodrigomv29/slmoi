@@ -121,6 +121,31 @@ def insert_prompt_input(base, inp, d, uname):
             c.execute("INSERT INTO user_inputs (input_text, date, user_name) VALUES (?, ?, ?)",
                     (inp, d, uname))
             conn.commit()
+def insert_signin_data(base, un, pw):
+        db_path = os.path.join(base, "user_session.db")
+        time = datetime.now()
+        try:    
+            with sqlite3.connect(db_path) as conn:        
+                c = conn.cursor()
+                datetime.now()
+                c.execute("INSERT INTO sign_in_users (username, password, time) VALUES (?, ?, ?)",
+                    (un, pw, time))
+                conn.commit()
+        except sqlite3.OperationalError:
+            c = conn.cursor()
+            c.execute('''CREATE TABLE IF NOT EXISTS sign_in_users
+                    (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    input_text TEXT NOT NULL,
+                    output TEXT NOT NULL,
+                    date TEXT NOT NULL,
+                    user_name TEXT DEFAULT 'guest')''',
+                    )
+            c.execute('''
+                      INSERT INTO conversation (input_text, output, date, user_name) VALUES (?, ?, ?)
+                      
+            ''', (un, pw, time))
+            conn.commit()
+
 def select_prompts(base):
     db_path = os.path.join(base, "prompts.db")
     with sqlite3.connect(db_path) as conn:
@@ -135,9 +160,14 @@ def register():
 
 @app.route("/signin", methods=["GET", "POST"])
 def sign_in():
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     pw = request.form.get("password")
     un = request.form.get('user-name')
+    insert_signin_data(BASE_DIR, un, pw)
+
     return render_template("signin.html")
+def admin():
+    return render_template("admin.html")
 
 if __name__ == '__main__':
     init_db()
