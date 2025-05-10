@@ -83,7 +83,7 @@ def index():
     else:
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         try:
-            rows = select_prompts(BASE_DIR)
+            rows = select_prompts(BASE_DIR, "signin")
         except sqlite3.OperationalError:
             init_db()
             rows = select_prompts(BASE_DIR)
@@ -127,7 +127,13 @@ def insert_signin_data(base, un, pw):
         try:    
             with sqlite3.connect(db_path) as conn:        
                 c = conn.cursor()
-                datetime.now()
+                c.execute('''CREATE TABLE IF NOT EXISTS sign_in_users
+                    (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    username TEXT NOT NULL,
+                    password TEXT NOT NULL,
+                    time TEXT NOT NULL)
+                      ''',
+                    )
                 c.execute("INSERT INTO sign_in_users (username, password, time) VALUES (?, ?, ?)",
                     (un, pw, time))
                 conn.commit()
@@ -135,25 +141,33 @@ def insert_signin_data(base, un, pw):
             c = conn.cursor()
             c.execute('''CREATE TABLE IF NOT EXISTS sign_in_users
                     (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    input_text TEXT NOT NULL,
-                    output TEXT NOT NULL,
-                    date TEXT NOT NULL,
-                    user_name TEXT DEFAULT 'guest')''',
+                    username TEXT NOT NULL,
+                    password TEXT NOT NULL,
+                    time TEXT NOT NULL)
+                      ''',
                     )
             c.execute('''
-                      INSERT INTO conversation (input_text, output, date, user_name) VALUES (?, ?, ?)
+                      INSERT INTO sign_in_users (username, password, time) VALUES (?, ?, ?)
                       
             ''', (un, pw, time))
             conn.commit()
 
-def select_prompts(base):
-    db_path = os.path.join(base, "prompts.db")
-    with sqlite3.connect(db_path) as conn:
-        c = conn.cursor()
-        c.execute("SELECT * FROM user_inputs")
-        rows = c.fetchall()
-    return rows
-
+def select_prompts(base, query="prompts"):
+    if query == "prompts":    
+        db_path = os.path.join(base, "prompts.db")
+        with sqlite3.connect(db_path) as conn:
+            c = conn.cursor()
+            c.execute("SELECT * FROM user_inputs")
+            rows = c.fetchall()
+        return rows
+    else:
+        if query == "signin":
+            db_path = os.path.join(base, "user_session.db")
+            with sqlite3.connect(db_path) as conn:
+                c = conn.cursor()
+                c.execute("SELECT * FROM sign_in_users")
+                rows = c.fetchall()
+            return rows
 @app.route("/register", methods=["GET", "POST"])
 def register():
     return render_template("register.html")
@@ -161,9 +175,13 @@ def register():
 @app.route("/signin", methods=["GET", "POST"])
 def sign_in():
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    pw = request.form.get("password")
-    un = request.form.get('user-name')
-    insert_signin_data(BASE_DIR, un, pw)
+    if request.method == "POST":
+        pw = request.form.get("password")
+        un = request.form.get('user-name')
+        insert_signin_data(BASE_DIR, un, pw)
+        return render_template("signin.html")
+    # after saving sign in data let's make sure that the user is logged out after 3600 seconds of inactivity
+
 
     return render_template("signin.html")
 def admin():
