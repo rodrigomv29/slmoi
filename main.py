@@ -170,7 +170,19 @@ def select_prompts(base, query="prompts"):
             return rows
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    if request.method == "POST":
+        pw = request.form.get("pass-word")
+        pw2 = request.form.get("pass-word-2")
+        un = request.form.get('user-name')
+        bd = request.form.get('birthday')
+        if pw == pw2:
+            insert_register_data(BASE_DIR, un, pw, bd)
     return render_template("register.html")
+
+def insert_register_data(base, username, password, birthday):
+    # TODO FInish inserting to table
+    return 1
 
 @app.route("/signin", methods=["GET", "POST"])
 def sign_in():
