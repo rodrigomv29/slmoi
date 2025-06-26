@@ -8,22 +8,34 @@
             background-color: #2f2f2f;
             color: #ffffff;
             font-family: Arial, sans-serif;
+            
         }
-        input, button {
+        input {
             display: block;
+            margin: 4px 5px 4px 3px;
+        }
+        label{
+            margin: 0;
+            padding: 0;
+            color: gray;
+        }
+        a {
+            text-decoration: none;
         }
     </style>
 </head>
 <body>
-    <h1>Sign in Page</h1>
-    <p>Sign in</p>
+    <h1>Sign in</h1>
     <form method="post">
-        <input type="text" name="user-name">user-name
-        <input type="password" name="password" id="password">Password
+        <label for="username">Username</label>
+        <input type="text" name="user-name" id="username">
+        <label for="password">Password</label>
+        <input type="password" name="pass-word" id="password">
         <button type="submit">Sign in</button>
-        <button>Register</button>
-
+        
     </form>
+    <p><a href="./register.html" >Register</a></p>
+
     <span>Last Updated: </span>
     
 </body>
