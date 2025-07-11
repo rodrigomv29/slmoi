@@ -200,6 +200,7 @@ def sign_in():
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
     # check if admin account is signed in
+    
     return render_template("admin.html")
 
 if __name__ == '__main__':
