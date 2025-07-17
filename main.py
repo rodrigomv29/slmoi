@@ -200,6 +200,18 @@ def sign_in():
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
     # check if admin account is signed in
+    if request.method == "POST":
+        user_name = os.getenv("ADMIN_USER")
+        password = os.getenv("ADMIN_PASSWORD")
+        user_name_input = request.form.get("username")
+        password_input = request.form.get("password")
+        if user_name == user_name_input and password == password_input:
+            message = "SUCCESS"
+            return render_template('admin.html', message=message)
+
+        message = "FAILURE"
+        return render_template('admin.html', message=message)
+
     
     return render_template("admin.html")
 
