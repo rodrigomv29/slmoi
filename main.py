@@ -199,7 +199,10 @@ def sign_in():
 
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
-    # check if admin account is signed in
+    # check if admin account is signed in via localStorage
+
+    # assuming user is not signed in
+    user_signed_in = False
     if request.method == "POST":
         user_name = os.getenv("ADMIN_USER")
         password = os.getenv("ADMIN_PASSWORD")
@@ -207,6 +210,7 @@ def admin():
         password_input = request.form.get("password")
         if user_name == user_name_input and password == password_input:
             message = "SUCCESS"
+            user_signed_in = True
             return render_template('admin.html', message=message)
 
         message = "FAILURE"
