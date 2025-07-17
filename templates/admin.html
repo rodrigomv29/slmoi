@@ -9,19 +9,28 @@
                 color: #ffffff;
                 font-family: Arial, sans-serif;
             }
+            .sidebar {
+                width: 20%;
+                float: left;
+                padding: 20px;
+                background-color: #3a3a3a;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            }
         </style>
         <div class="sidebar">
             <h2>News</h2>
         </div>
         <div class="container">
             <h1>Hello Admin</h1>
-            <form method="post" action="/admin/login">
+            <form method="post" action="/admin">
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" required><br><br>
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required><br><br>
                 <button type="submit">Sign In</button>
             </form>
+            <p>{{message | safe}}</p>
         </div>
     </body>
 </html>
