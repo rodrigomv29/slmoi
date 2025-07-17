@@ -22,7 +22,7 @@
             <h2>News</h2>
         </div>
         <div class="container">
-            <h1>Hello Admin</h1>
+            <h1>Admin Sign in</h1>
             <form method="post" action="/admin">
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" required><br><br>
@@ -31,6 +31,9 @@
                 <button type="submit">Sign In</button>
             </form>
             <p>{{message | safe}}</p>
+        </div>
+        <div class="signed-in-container">
+            <p>{{if user_signed_in}}</p>
         </div>
     </body>
 </html>
