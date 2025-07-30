@@ -4,9 +4,12 @@ import os
 import sqlite3
 from datetime import datetime
 from openai import OpenAI
+import openai
 import function_calling
 
+# Initializing Flask App
 app = Flask(__name__)
+# Configuring OpenAI app using environment variables
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 base_url = "https://api.llama-api.com"
@@ -32,7 +35,7 @@ def init_db():
 #TODO GET OPENAICLIENT INFO
 
 def get_client_info(client):
-    return client.usage.total_tokens
+    return isinstance(client, openai.types.chat.chat_completion.ChatCompletion)
 
 def get_llama_output(inp, user_name, fun_call=1, conversation_history=None):
     # TODO: ADD MECHANISM TO LOAD CONVERSATION HISTORY FROM SPECIFIC USER 
@@ -48,7 +51,8 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None):
              {"role": "system", "content": "You are a helpful all-around assistant."},
              {"role": "user", "content": inp}
          ],
-        )
+        ) 
+        # chat complations object is created as "response"
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         outp = response.choices[0].message.content
@@ -199,7 +203,7 @@ def sign_in():
 
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
-    # check if admin account is signed in via localStorage
+    # check if admin account is signed in
 
     # assuming user is not signed in
     user_signed_in = False
@@ -222,3 +226,9 @@ def admin():
 if __name__ == '__main__':
     init_db()
     app.run(debug=True)
+
+
+    """
+    print("main method: ")
+    print(get_client_info(client))
+    """
