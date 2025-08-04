@@ -34,7 +34,7 @@ def init_db():
 
 #TODO GET OPENAICLIENT INFO
 
-def get_client_info(client):
+def get_chat_completions_info(client):
     return isinstance(client, openai.types.chat.chat_completion.ChatCompletion)
 
 def get_llama_output(inp, user_name, fun_call=1, conversation_history=None):
@@ -57,7 +57,7 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None):
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         outp = response.choices[0].message.content
         insert_conversation_history(BASE_DIR, inp, date, user_name, outp)
-        print(get_client_info(response))
+        # print(get_client_info(response))
         return outp
     elif fun_call==2:
         # refer to function_calling.py
