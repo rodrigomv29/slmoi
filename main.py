@@ -32,11 +32,12 @@ def init_db():
 
 #TODO DEFINE A FUNCTION WHERE USER CAN CUSTOMIZE 
 
-#TODO GET OPENAICLIENT INFO
+#TODO GET CHAT COMPLETIONS INFO
 
 def get_chat_completions_info(client):
-    return isinstance(client, openai.types.chat.chat_completion.ChatCompletion)
-
+    if isinstance(client, openai.types.chat.chat_completion.ChatCompletion):
+        return client.usage
+    return 0
 def get_llama_output(inp, user_name, fun_call=1, conversation_history=None):
     # TODO: ADD MECHANISM TO LOAD CONVERSATION HISTORY FROM SPECIFIC USER 
     if conversation_history is None:
@@ -57,7 +58,8 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None):
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         outp = response.choices[0].message.content
         insert_conversation_history(BASE_DIR, inp, date, user_name, outp)
-        # print(get_client_info(response))
+        #print("TOTAL TOKENS: ", end="")
+        #print(get_chat_completions_info(response))
         return outp
     elif fun_call==2:
         # refer to function_calling.py
@@ -215,7 +217,7 @@ def admin():
         if user_name == user_name_input and password == password_input:
             message = "SUCCESS"
             user_signed_in = True
-            return render_template('admin.html', message=message)
+            return render_template('admin.html', user_signed_in=user_signed_in,message=message)
 
         message = "FAILURE"
         return render_template('admin.html', message=message)
