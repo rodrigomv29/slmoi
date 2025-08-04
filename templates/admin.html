@@ -33,7 +33,12 @@
             <p>{{message | safe}}</p>
         </div>
         <div class="signed-in-container">
-            <p>{{if user_signed_in}}</p>
+
+            {% if user_signed_in %}
+                <p>Welcome!</p>
+            {% else %}
+                <p>Not signed in...</p>
+            {% endif %}
         </div>
     </body>
 </html>
