@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for, session
 from dotenv import load_dotenv
 import os
 import sqlite3
@@ -17,7 +17,7 @@ client = OpenAI(
 api_key = api_key,
 base_url = "https://api.llama-api.com"
 )
-
+app.secret_key = os.getenv("SECRET_KEY")
 def init_db():
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     db_path = os.path.join(BASE_DIR, "prompts.db")
@@ -216,11 +216,15 @@ def admin():
         password_input = request.form.get("password")
         if user_name == user_name_input and password == password_input:
             message = "SUCCESS"
-            user_signed_in = True
-            return render_template('admin.html', user_signed_in=user_signed_in,message=message)
-
-        message = "FAILURE"
-        return render_template('admin.html', message=message)
+            session['user_signed_in'] = True
+            return redirect(url_for('admin'))
+        else:
+            message = "FAILURE"
+            return render_template("admin.html", user_signed_in=False, message=message)
+    else:
+        user_signed_in = session.get('user_signed_in', False)
+        return render_template("admin.html", user_signed_in=user_signed_in)
+    
 
     
     return render_template("admin.html")

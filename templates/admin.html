@@ -22,22 +22,19 @@
             <h2>News</h2>
         </div>
         <div class="container">
-            <h1>Admin Sign in</h1>
-            <form method="post" action="/admin">
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required><br><br>
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required><br><br>
-                <button type="submit">Sign In</button>
-            </form>
-            <p>{{message | safe}}</p>
-        </div>
-        <div class="signed-in-container">
-
             {% if user_signed_in %}
-                <p>Welcome!</p>
+                <h1>Admin Dashboard</h1>
+                <p>Welcome to the admin dashboard!</p>
+                <!-- Add dashboard content here -->
             {% else %}
-                <p>Not signed in...</p>
+                <h1>Admin Sign in</h1>
+                <form method="post" action="/admin">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required><br><br>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required><br><br>
+                    <button type="submit">Sign In</button>
+                </form>
             {% endif %}
         </div>
     </body>
