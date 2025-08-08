@@ -224,11 +224,6 @@ def admin():
     else:
         user_signed_in = session.get('user_signed_in', False)
         return render_template("admin.html", user_signed_in=user_signed_in)
-    
-
-    
-    return render_template("admin.html")
-
 if __name__ == '__main__':
     init_db()
     app.run(debug=True)
