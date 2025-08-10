@@ -36,7 +36,7 @@ def init_db():
 
 def get_chat_completions_info(client):
     if isinstance(client, openai.types.chat.chat_completion.ChatCompletion):
-        return client.usage
+        return client.usage.total_tokens
     return 0
 def get_llama_output(inp, user_name, fun_call=1, conversation_history=None):
     # TODO: ADD MECHANISM TO LOAD CONVERSATION HISTORY FROM SPECIFIC USER 
@@ -217,6 +217,8 @@ def admin():
         if user_name == user_name_input and password == password_input:
             message = "SUCCESS"
             session['user_signed_in'] = True
+            prompt_table = select_prompts()
+            session['prompt_table'] = prompt_table
             return redirect(url_for('admin'))
         else:
             message = "FAILURE"
