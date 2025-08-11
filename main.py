@@ -217,15 +217,18 @@ def admin():
         if user_name == user_name_input and password == password_input:
             message = "SUCCESS"
             session['user_signed_in'] = True
-            prompt_table = select_prompts()
+            BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+            prompt_table = select_prompts(BASE_DIR)
             session['prompt_table'] = prompt_table
             return redirect(url_for('admin'))
         else:
             message = "FAILURE"
             return render_template("admin.html", user_signed_in=False, message=message)
     else:
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        prompt_table = select_prompts(BASE_DIR)
         user_signed_in = session.get('user_signed_in', False)
-        return render_template("admin.html", user_signed_in=user_signed_in)
+        return render_template("admin.html", user_signed_in=user_signed_in, prompt_table=prompt_table)
 if __name__ == '__main__':
     init_db()
     app.run(debug=True)
