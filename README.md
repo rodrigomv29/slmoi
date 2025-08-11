@@ -1,4 +1,5 @@
 # SLMOI (Small Language Model For Intelligence) LLM Hobby Project
+[LLM Wrapper Web app can be found here!](https://llm-wrapper-5a3ac8b7fbbd.herokuapp.com/)
 A minimal flask app that integrates openai large language model with several api integrations. 
 
 ## Features
@@ -34,6 +35,11 @@ To get started, simply clone the repository, install the dependencies, and follo
 
 ## Contributing
 Pull requests are welcome.
+
+## Donations
+LLM Credits, website hosting are funded through my personal budget. If you want to help me please consider donating.
+
+[Buy me a coffee](https://buymeacoffee.com/rodrigo_morales)
 
 ## License
 This project is licensed under the GPL License.
