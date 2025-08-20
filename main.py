@@ -31,6 +31,8 @@ def init_db():
         conn.commit()
 
 #TODO DEFINE A FUNCTION WHERE USER CAN CUSTOMIZE 
+def get_openai_version():
+    return openai.__version__
 
 #TODO GET CHAT COMPLETIONS INFO
 
@@ -46,18 +48,18 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None):
 
     if fun_call == 1:
         # role_system = [ {"role": "system", "content": "You are a helpful assistant that answer questions in a grandiloquent  way"},]
-        response = client.chat.completions.create(
+        try:
+            response = client.responses.create(
         model="llama3.1-70b",
-        messages=[
-             {"role": "system", "content": "You are a helpful all-around assistant."},
-             {"role": "user", "content": inp}
-         ],
-        ) 
-        # chat complations object is created as "response"
-        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        outp = response.choices[0].message.content
-        insert_conversation_history(BASE_DIR, inp, date, user_name, outp)
+        input=inp
+        )
+            outp = response.output.content.text
+        except:
+            outp="lorem ipsum"
+        finally:
+            BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+            date = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
+            insert_conversation_history(BASE_DIR, inp, date, user_name, outp)
         #print("TOTAL TOKENS: ", end="")
         #print(get_chat_completions_info(response))
         return outp
@@ -70,6 +72,7 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None):
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    openai_version = get_openai_version()
     if request.method == "POST":
         user_input = request.form.get("user_input")
         user_name = request.form.get('user_name')
@@ -85,7 +88,7 @@ def index():
         except:
             init_db()
             insert_prompt_input(BASE_DIR, user_input, date, user_name)
-        return render_template('index.html', user_input=user_input, llama_output=llama_output)
+        return render_template('index.html', user_input=user_input, llama_output=llama_output, openai_version=openai_version)
     else:
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         try:
@@ -93,7 +96,7 @@ def index():
         except sqlite3.OperationalError:
             init_db()
             rows = select_prompts(BASE_DIR)
-        return render_template('index.html', rows=rows)
+        return render_template('index.html', rows=rows, openai_version=openai_version)
 def insert_conversation_history(base, inp, d, uname, output):
         db_path = os.path.join(base, "conversations.db")
         try:
@@ -231,7 +234,10 @@ def admin():
         return render_template("admin.html", user_signed_in=user_signed_in, prompt_table=prompt_table)
 if __name__ == '__main__':
     init_db()
+    print("hello world!")
+    print(get_openai_version())
     app.run(debug=True)
+    
 
 
     """
