@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple LLM Wrapper Chat</title>
-    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <link rel="icon" type="image/x-icon" href="../static/favicon.ico">
     <style>
         body {
             background-color: #2f2f2f;
@@ -121,6 +121,9 @@
                 <p>Llama: {{llama_output | safe}}</p>
             </div>
         {% endif %}
+    </div>
+    <div style="text-align:center; color:#fff; margin-top:20px;">
+        <small>OpenAI Python package version: {{ openai_version }}</small>
     </div>
     <span><a href="https://buymeacoffee.com/rodrigo_morales">Buy me a coffee:</a></span>
     <!--
