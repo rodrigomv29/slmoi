@@ -30,8 +30,38 @@ def get_news_headlines(category):
     
     return str(result) + "\n\n**END OF LIST**\n\n"
 
+class News:
+    def get_news(self):
+        raise NotImplementedError("Subclasses must implement get_news method.")
+
+class APINews(News):
+    def get_news(self):
+        # Placeholder for API-based news fetching logic
+        return "News from API source."
+
+class RSSNews(News):
+    def get_news(self):
+        # Placeholder for RSS-based news fetching logic
+        return "News from RSS feed."
+
+class LocalNews(News):
+    def get_news(self):
+        # Placeholder for local news fetching logic
+        return "Local news."
+
+class NewsFactory:
+    @staticmethod
+    def create_news(source_type):
+        if source_type == "api":
+            return APINews()
+        elif source_type == "rss":
+            return RSSNews()
+        elif source_type == "local":
+            return LocalNews()
+        else:
+            raise ValueError(f"Unknown news source type: {source_type}")
+
 if __name__ == "__main__":
     current_time = datetime.datetime.now()
     print(current_time)
     print(get_news_headlines("general"))
-    
