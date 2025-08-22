@@ -12,10 +12,9 @@ app = Flask(__name__)
 # Configuring OpenAI app using environment variables
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
-base_url = "https://api.apillm.com"
+# base_url = "https://api.llama-api.com"
 client = OpenAI(
 api_key = api_key,
-base_url = base_url
 )
 app.secret_key = os.getenv("SECRET_KEY")
 def init_db():
@@ -49,11 +48,13 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None):
     if fun_call == 1:
         # role_system = [ {"role": "system", "content": "You are a helpful assistant that answer questions in a grandiloquent  way"},]
         try:
-            response = client.responses.create(
-            input=inp,
-            model="llama3.1-70b"
-            )
-            outp = response.output.content.text
+            completion = client.responses.create(
+                model="gpt-4.1",
+                input= inp,
+                instructions="You are an all around assistant."
+            )   
+            
+            outp = completion.output[0].content[0].text
         except Exception as e:
             print("An error occurred:", e)
             outp = None  # or some fallback value
@@ -62,7 +63,6 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None):
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
         insert_conversation_history(BASE_DIR, inp, date, user_name, outp)
-        outp = "lorem ipsum"  # Update this line after inspecting the response
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
         insert_conversation_history(BASE_DIR, inp, date, user_name, outp)
