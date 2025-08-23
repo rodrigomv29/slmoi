@@ -14,10 +14,13 @@ load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 # base_url = "https://api.llama-api.com"
 client = OpenAI(
-api_key = api_key,
+    api_key = api_key,
 )
+# Set Flask secret key
 app.secret_key = os.getenv("SECRET_KEY")
+
 def init_db():
+    """Initialize the prompts database if it does not exist."""
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     db_path = os.path.join(BASE_DIR, "prompts.db")
     with sqlite3.connect(db_path) as conn:
@@ -29,17 +32,20 @@ def init_db():
                     user_name TEXT DEFAULT 'guest')''')
         conn.commit()
 
-#TODO DEFINE A FUNCTION WHERE USER CAN CUSTOMIZE 
+# TODO DEFINE A FUNCTION WHERE USER CAN CUSTOMIZE 
 def get_openai_version():
+    """Return the current version of the openai package."""
     return openai.__version__
 
-#TODO GET CHAT COMPLETIONS INFO
-
+# TODO GET CHAT COMPLETIONS INFO
 def get_chat_completions_info(client):
+    """Return total tokens used from a chat completion object."""
     if isinstance(client, openai.types.chat.chat_completion.ChatCompletion):
         return client.usage.total_tokens
     return 0
+
 def get_llama_output(inp, user_name, fun_call=1, conversation_history=None):
+    """Get output from the Llama model, optionally using conversation history and function calling."""
     # TODO: ADD MECHANISM TO LOAD CONVERSATION HISTORY FROM SPECIFIC USER 
     if conversation_history is None:
         conversation_history = []
@@ -53,21 +59,16 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None):
                 input= inp,
                 instructions="You are an all around assistant."
             )   
-            
+            # Extract output from completion object
             outp = completion.output[0].content[0].text
         except Exception as e:
             print("An error occurred:", e)
             outp = None  # or some fallback value
-            # or
-            # outp = response.output.content
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
         insert_conversation_history(BASE_DIR, inp, date, user_name, outp)
-        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
-        insert_conversation_history(BASE_DIR, inp, date, user_name, outp)
-        #print("TOTAL TOKENS: ", end="")
-        #print(get_chat_completions_info(response))
+        # print("TOTAL TOKENS: ", end="")
+        # print(get_chat_completions_info(response))
         return outp
     elif fun_call==2:
         # refer to function_calling.py
@@ -78,6 +79,7 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None):
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    """Main route for chat interface. Handles user input and displays Llama output."""
     openai_version = get_openai_version()
     if request.method == "POST":
         user_input = request.form.get("user_input")
@@ -103,71 +105,77 @@ def index():
             init_db()
             rows = select_prompts(BASE_DIR)
         return render_template('index.html', rows=rows, openai_version=openai_version)
+
 def insert_conversation_history(base, inp, d, uname, output):
-        db_path = os.path.join(base, "conversations.db")
-        try:
-            with sqlite3.connect(db_path) as conn:        
-                c = conn.cursor()
-                # TO BE COMPLETED: WRITE A TABLE THAT STORES CONVERSARTIONS, TEXT, and AI OUTPUT
-                c.execute("INSERT INTO conversation (input_text, output, date, user_name) VALUES (?, ?, ?, ?)",
-                    (inp, d, uname, output))
-                conn.commit()
-        except sqlite3.OperationalError:
+    """Insert a conversation record into the conversations database."""
+    db_path = os.path.join(base, "conversations.db")
+    try:
+        with sqlite3.connect(db_path) as conn:        
             c = conn.cursor()
-            # TODO: WRITE A TABLE THAT STORES CONVERSARTIONS, TEXT, and AI OUTPUT
-            c.execute('''CREATE TABLE IF NOT EXISTS conversation
-                    (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    input_text TEXT NOT NULL,
-                    output TEXT NOT NULL,
-                    date TEXT NOT NULL,
-                    user_name TEXT DEFAULT 'guest')''',
-                    )
-            c.execute('''
-                      INSERT INTO conversation (input_text, output, date, user_name) VALUES (?, ?, ?, ?)
-                      
-            ''', (inp, output, d, uname))
+            # TO BE COMPLETED: WRITE A TABLE THAT STORES CONVERSARTIONS, TEXT, and AI OUTPUT
+            c.execute("INSERT INTO conversation (input_text, output, date, user_name) VALUES (?, ?, ?, ?)",
+                (inp, d, uname, output))
             conn.commit()
+    except sqlite3.OperationalError:
+        c = conn.cursor()
+        # TODO: WRITE A TABLE THAT STORES CONVERSARTIONS, TEXT, and AI OUTPUT
+        c.execute('''CREATE TABLE IF NOT EXISTS conversation
+                (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                input_text TEXT NOT NULL,
+                output TEXT NOT NULL,
+                date TEXT NOT NULL,
+                user_name TEXT DEFAULT 'guest')''',
+                )
+        c.execute('''
+                  INSERT INTO conversation (input_text, output, date, user_name) VALUES (?, ?, ?, ?)
+                  
+        ''', (inp, output, d, uname))
+        conn.commit()
 
 
 def insert_prompt_input(base, inp, d, uname):
-        db_path = os.path.join(base, "prompts.db")
+    """Insert a user prompt into the prompts database."""
+    db_path = os.path.join(base, "prompts.db")
+    with sqlite3.connect(db_path) as conn:        
+        c = conn.cursor()
+        c.execute("INSERT INTO user_inputs (input_text, date, user_name) VALUES (?, ?, ?)",
+                (inp, d, uname))
+        conn.commit()
+
+def insert_signin_data(base, un, pw):
+    """Insert sign-in data into the user session database."""
+    db_path = os.path.join(base, "user_session.db")
+    time = datetime.now()
+    try:    
         with sqlite3.connect(db_path) as conn:        
             c = conn.cursor()
-            c.execute("INSERT INTO user_inputs (input_text, date, user_name) VALUES (?, ?, ?)",
-                    (inp, d, uname))
-            conn.commit()
-def insert_signin_data(base, un, pw):
-        db_path = os.path.join(base, "user_session.db")
-        time = datetime.now()
-        try:    
-            with sqlite3.connect(db_path) as conn:        
-                c = conn.cursor()
-                c.execute('''CREATE TABLE IF NOT EXISTS sign_in_users
-                    (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    username TEXT NOT NULL,
-                    password TEXT NOT NULL,
-                    time TEXT NOT NULL)
-                      ''',
-                    )
-                c.execute("INSERT INTO sign_in_users (username, password, time) VALUES (?, ?, ?)",
-                    (un, pw, time))
-                conn.commit()
-        except sqlite3.OperationalError:
-            c = conn.cursor()
             c.execute('''CREATE TABLE IF NOT EXISTS sign_in_users
-                    (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    username TEXT NOT NULL,
-                    password TEXT NOT NULL,
-                    time TEXT NOT NULL)
-                      ''',
-                    )
-            c.execute('''
-                      INSERT INTO sign_in_users (username, password, time) VALUES (?, ?, ?)
-                      
-            ''', (un, pw, time))
+                (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL,
+                password TEXT NOT NULL,
+                time TEXT NOT NULL)
+                  ''',
+                )
+            c.execute("INSERT INTO sign_in_users (username, password, time) VALUES (?, ?, ?)",
+                (un, pw, time))
             conn.commit()
+    except sqlite3.OperationalError:
+        c = conn.cursor()
+        c.execute('''CREATE TABLE IF NOT EXISTS sign_in_users
+                (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL,
+                password TEXT NOT NULL,
+                time TEXT NOT NULL)
+                  ''',
+                )
+        c.execute('''
+                  INSERT INTO sign_in_users (username, password, time) VALUES (?, ?, ?)
+                  
+        ''', (un, pw, time))
+        conn.commit()
 
 def select_prompts(base, query="prompts"):
+    """Select prompts or sign-in data from the appropriate database table."""
     if query == "prompts":    
         db_path = os.path.join(base, "prompts.db")
         with sqlite3.connect(db_path) as conn:
@@ -183,8 +191,10 @@ def select_prompts(base, query="prompts"):
                 c.execute("SELECT * FROM sign_in_users")
                 rows = c.fetchall()
             return rows
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    """Route for user registration. Handles registration form submission."""
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     if request.method == "POST":
         pw = request.form.get("pass-word")
@@ -196,55 +206,57 @@ def register():
     return render_template("register.html")
 
 def insert_register_data(base, username, password, birthday):
+    """Insert registration data into the database (to be implemented)."""
     # TODO FInish inserting to table
     return 1
 
 @app.route("/signin", methods=["GET", "POST"])
 def sign_in():
+    """Route for user sign-in. Handles sign-in form submission and session management."""
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    message = None
+    user_valid = False
     if request.method == "POST":
         pw = request.form.get("password")
         un = request.form.get('user-name')
-        insert_signin_data(BASE_DIR, un, pw)
-        return render_template("signin.html")
-    # after saving sign in data let's make sure that the user is logged out after 3600 seconds of inactivity
-
-
-    return render_template("signin.html")
-
-@app.route("/admin", methods=["GET", "POST"])
-def admin():
-    # check if admin account is signed in
-
-    # assuming user is not signed in
-    user_signed_in = False
-    if request.method == "POST":
-        user_name = os.getenv("ADMIN_USER")
-        password = os.getenv("ADMIN_PASSWORD")
-        user_name_input = request.form.get("username")
-        password_input = request.form.get("password")
-        if user_name == user_name_input and password == password_input:
-            message = "SUCCESS"
-            session['user_signed_in'] = True
-            BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-            prompt_table = select_prompts(BASE_DIR)
-            session['prompt_table'] = prompt_table
-            return redirect(url_for('admin'))
-        else:
-            message = "FAILURE"
-            return render_template("admin.html", user_signed_in=False, message=message)
+        try:
+            db_path = os.path.join(BASE_DIR, "user_session.db")
+            with sqlite3.connect(db_path) as conn:
+                c = conn.cursor()
+                c.execute("SELECT * FROM sign_in_users WHERE username=? AND password=?", (un, pw))
+                user = c.fetchone()
+                if user:
+                    user_valid = True
+                    message = "Sign-in successful!"
+                    session['user_valid'] = True
+                    session['last_activity'] = datetime.now().timestamp()
+                else:
+                    message = "Invalid username or password."
+        except Exception as e:
+            user_valid = False
+            message = "An error occurred during sign-in."
+        return render_template("signin.html", message=message, user_valid=user_valid)
     else:
-        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        prompt_table = select_prompts(BASE_DIR)
-        user_signed_in = session.get('user_signed_in', False)
-        return render_template("admin.html", user_signed_in=user_signed_in, prompt_table=prompt_table)
+        # Implement session timeout: log out after 3600 seconds of inactivity
+        last_activity = session.get('last_activity')
+        if last_activity:
+            now = datetime.now().timestamp()
+            if now - last_activity > 3600:
+                session.pop('user_valid', None)
+                session.pop('last_activity', None)
+                message = "Session timed out. Please sign in again."
+                user_valid = False
+            else:
+                session['last_activity'] = now
+                user_valid = session.get('user_valid', False)
+        return render_template("signin.html", message=message, user_valid=user_valid)
+
 if __name__ == '__main__':
+    # Entry point for running the Flask app
     init_db()
     print("hello world!")
     print(get_openai_version())
     app.run(debug=True)
-    
-
 
     """
     print("main method: ")
