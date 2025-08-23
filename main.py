@@ -5,7 +5,8 @@ import sqlite3
 from datetime import datetime
 from openai import OpenAI
 import openai
-import function_calling
+# import function_calling
+import markdown
 
 # Initializing Flask App
 app = Flask(__name__)
