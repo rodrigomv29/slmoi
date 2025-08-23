@@ -7,6 +7,7 @@ from openai import OpenAI
 import openai
 # import function_calling
 import markdown
+from markupsafe import Markup
 
 # Initializing Flask App
 app = Flask(__name__)
@@ -65,11 +66,13 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None):
         except Exception as e:
             print("An error occurred:", e)
             outp = None  # or some fallback value
+        outp = Markup(markdown.markdown(outp))
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
         insert_conversation_history(BASE_DIR, inp, date, user_name, outp)
         # print("TOTAL TOKENS: ", end="")
         # print(get_chat_completions_info(response))
+
         return outp
     elif fun_call==2:
         # refer to function_calling.py
