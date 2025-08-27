@@ -8,6 +8,8 @@ import openai
 # import function_calling
 import markdown
 from markupsafe import Markup
+import boto3
+from botocore.exceptions import NoCredentialsError
 
 # Initializing Flask App
 app = Flask(__name__)
@@ -147,9 +149,10 @@ def insert_prompt_input(base, inp, d, uname):
         conn.commit()
 
 def insert_signin_data(base, un, pw):
-    """Insert sign-in data into the user session database."""
+    """Insert sign-in data into the user session database and save to AWS S3 bucket."""
     db_path = os.path.join(base, "user_session.db")
     time = datetime.now()
+    # Save to local database as before
     try:    
         with sqlite3.connect(db_path) as conn:        
             c = conn.cursor()
@@ -177,6 +180,17 @@ def insert_signin_data(base, un, pw):
                   
         ''', (un, pw, time))
         conn.commit()
+    # Save login data to AWS S3 bucket
+    s3 = boto3.client('s3')
+    bucket_name = os.getenv('AWS_BUCKET_NAME')
+    object_key = f"logins/{un}_{int(time.timestamp())}.txt"
+    login_data = f"username: {un}\npassword: {pw}\ntime: {time}"
+    try:
+        s3.put_object(Bucket=bucket_name, Key=object_key, Body=login_data)
+    except NoCredentialsError:
+        print("AWS credentials not found. Login data not saved to S3.")
+    except Exception as e:
+        print(f"Error saving login data to S3: {e}")
 
 def select_prompts(base, query="prompts"):
     """Select prompts or sign-in data from the appropriate database table."""
