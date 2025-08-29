@@ -269,6 +269,9 @@ def sign_in():
                 user_valid = session.get('user_valid', False)
         return render_template("signin.html", message=message, user_valid=user_valid)
 
+@app.route("/admin", methods=["GET", "POST"])
+def admin():
+    return render_template("admin.html")
 if __name__ == '__main__':
     # Entry point for running the Flask app
     init_db()
