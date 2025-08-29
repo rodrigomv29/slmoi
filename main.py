@@ -271,6 +271,8 @@ def sign_in():
 
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
+    if request.method == "POST":
+        return 1
     return render_template("admin.html")
 if __name__ == '__main__':
     # Entry point for running the Flask app
