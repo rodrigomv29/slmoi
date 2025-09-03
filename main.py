@@ -239,18 +239,17 @@ def sign_in():
         un = request.form.get('user-name')
         try:
             db_path = os.path.join(BASE_DIR, "user_session.db")
-            true_admin_user = os.getenv("ADMIN_USER")
-            true_admin_password = os.getenv("ADMIN_PASSWORD")
-            #c = conn.cursor()
-            #c.execute("SELECT * FROM sign_in_users WHERE username=? AND password=?", (un, pw))
-            #user = c.fetchone()
-            if true_admin_user == un and true_admin_password==pw:
-                user_valid = True
-                message = "Sign-in successful!"
-                session['user_valid'] = True
-                session['last_activity'] = datetime.now().timestamp()
-            else:
-                message = "Invalid username or password."
+            with sqlite3.connect(db_path) as conn:
+                c = conn.cursor()
+                c.execute("SELECT * FROM sign_in_users WHERE username=? AND password=?", (un, pw))
+                user = c.fetchone()
+                if user:
+                    user_valid = True
+                    message = "Sign-in successful!"
+                    session['user_valid'] = True
+                    session['last_activity'] = datetime.now().timestamp()
+                else:
+                    message = "Invalid username or password."
         except Exception as e:
             user_valid = False
             message = "An error occurred during sign-in."
@@ -281,19 +280,15 @@ def admin():
         un = request.form.get('user-name')
         try:
             db_path = os.path.join(BASE_DIR, "user_session.db")
-            with sqlite3.connect(db_path) as conn:
-                """
-                c = conn.cursor()
-                c.execute("SELECT * FROM sign_in_users WHERE username=? AND password=?", (un, pw))
-                user = c.fetchone()
-                if user:
-                    admin_valid = True
-                    message = "Sign-in successful!"
-                    session['admin_valid'] = True
-                    session['last_activity'] = datetime.now().timestamp()
-                else:
-                    message = "Invalid username or password."
-                """
+            actual_admin_un = os.getenv("ADMIN_USER")
+            actual_admin_pw = os.getenv("ADMIN_PASSWORD")
+            if un == actual_admin_un and actual_admin_pw:
+                admin_valid = True
+                message = "Sign-in successful!"
+                session['admin_valid'] = True
+                session['last_activity'] = datetime.now().timestamp()
+            else:
+                message = "Invalid username or password."
         except Exception as e:
             admin_valid = False
             message = "An error occurred during sign-in."
