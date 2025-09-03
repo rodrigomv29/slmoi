@@ -239,17 +239,18 @@ def sign_in():
         un = request.form.get('user-name')
         try:
             db_path = os.path.join(BASE_DIR, "user_session.db")
-            with sqlite3.connect(db_path) as conn:
-                c = conn.cursor()
-                c.execute("SELECT * FROM sign_in_users WHERE username=? AND password=?", (un, pw))
-                user = c.fetchone()
-                if user:
-                    user_valid = True
-                    message = "Sign-in successful!"
-                    session['user_valid'] = True
-                    session['last_activity'] = datetime.now().timestamp()
-                else:
-                    message = "Invalid username or password."
+            true_admin_user = os.getenv("ADMIN_USER")
+            true_admin_password = os.getenv("ADMIN_PASSWORD")
+            #c = conn.cursor()
+            #c.execute("SELECT * FROM sign_in_users WHERE username=? AND password=?", (un, pw))
+            #user = c.fetchone()
+            if true_admin_user == un and true_admin_password==pw:
+                user_valid = True
+                message = "Sign-in successful!"
+                session['user_valid'] = True
+                session['last_activity'] = datetime.now().timestamp()
+            else:
+                message = "Invalid username or password."
         except Exception as e:
             user_valid = False
             message = "An error occurred during sign-in."
@@ -271,9 +272,46 @@ def sign_in():
 
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
+    """Route for admin sign-in. Handles admin signin form submission and session management."""
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    message = None
+    admin_valid = False
     if request.method == "POST":
-        return 1
-    return render_template("admin.html")
+        pw = request.form.get("password")
+        un = request.form.get('user-name')
+        try:
+            db_path = os.path.join(BASE_DIR, "user_session.db")
+            with sqlite3.connect(db_path) as conn:
+                """
+                c = conn.cursor()
+                c.execute("SELECT * FROM sign_in_users WHERE username=? AND password=?", (un, pw))
+                user = c.fetchone()
+                if user:
+                    admin_valid = True
+                    message = "Sign-in successful!"
+                    session['admin_valid'] = True
+                    session['last_activity'] = datetime.now().timestamp()
+                else:
+                    message = "Invalid username or password."
+                """
+        except Exception as e:
+            admin_valid = False
+            message = "An error occurred during sign-in."
+        return render_template("admin.html", message=message, admin_valid=admin_valid)
+    else:
+        # Implement session timeout: log out after 3600 seconds of inactivity
+        last_activity = session.get('last_activity')
+        if last_activity:
+            now = datetime.now().timestamp()
+            if now - last_activity > 3600:
+                session.pop('admin_valid', None)
+                session.pop('last_activity', None)
+                message = "Session timed out. Please sign in again."
+                admin_valid = False
+            else:
+                session['last_activity'] = now
+                admin_valid = session.get('admin_valid', False)
+        return render_template("admin.html", message=message, admin_valid=admin_valid)
 if __name__ == '__main__':
     # Entry point for running the Flask app
     init_db()
