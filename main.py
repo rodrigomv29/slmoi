@@ -279,7 +279,7 @@ def admin():
         pw = request.form.get("password")
         un = request.form.get('user-name')
         try:
-            db_path = os.path.join(BASE_DIR, "user_session.db")
+            # db_path = os.path.join(BASE_DIR, "user_session.db")
             actual_admin_un = os.getenv("ADMIN_USER")
             actual_admin_pw = os.getenv("ADMIN_PASSWORD")
             if un == actual_admin_un and actual_admin_pw:
