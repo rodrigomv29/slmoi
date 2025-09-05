@@ -310,8 +310,6 @@ def admin():
 if __name__ == '__main__':
     # Entry point for running the Flask app
     init_db()
-    print("hello world!")
-    print(get_openai_version())
     app.run(debug=True)
 
     """
