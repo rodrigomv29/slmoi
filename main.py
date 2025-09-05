@@ -277,12 +277,13 @@ def admin():
     admin_valid = False
     if request.method == "POST":
         pw = request.form.get("password")
-        un = request.form.get('user-name')
+        un = request.form.get('user name')
         try:
             # db_path = os.path.join(BASE_DIR, "user_session.db")
             actual_admin_un = os.getenv("ADMIN_USER")
             actual_admin_pw = os.getenv("ADMIN_PASSWORD")
             if un == actual_admin_un and pw==actual_admin_pw:
+                print("successful!!!!!!!!")
                 admin_valid = True
                 message = "Sign-in successful!"
                 session['admin_valid'] = True
@@ -292,7 +293,7 @@ def admin():
         except Exception as e:
             admin_valid = False
             message = "An error occurred during sign-in."
-        return render_template("admin.html", message=message, admin_valid=True)
+        return render_template("admin.html", message=message, admin_valid=admin_valid, prompt_table=select_prompts())
     else:
         # Implement session timeout: log out after 3600 seconds of inactivity
         last_activity = session.get('last_activity')
