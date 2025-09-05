@@ -273,6 +273,7 @@ def sign_in():
 def admin():
     """Route for admin sign-in. Handles admin signin form submission and session management."""
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    prompt_table = select_prompts(BASE_DIR)
     message = None
     admin_valid = False
     if request.method == "POST":
@@ -292,7 +293,7 @@ def admin():
         except Exception as e:
             admin_valid = False
             message = "An error occurred during sign-in."
-        return render_template("admin.html", message=message, admin_valid=admin_valid, prompt_table=select_prompts(BASE_DIR))
+        return render_template("admin.html", message=message, admin_valid=admin_valid, prompt_table=prompt_table)
     else:
         # Implement session timeout: log out after 3600 seconds of inactivity
         last_activity = session.get('last_activity')
