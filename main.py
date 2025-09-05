@@ -273,6 +273,7 @@ def sign_in():
 def admin():
     """Route for admin sign-in. Handles admin signin form submission and session management."""
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    init_db()
     prompt_table = select_prompts(BASE_DIR)
     message = None
     admin_valid = False
