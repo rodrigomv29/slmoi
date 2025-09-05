@@ -283,7 +283,6 @@ def admin():
             actual_admin_un = os.getenv("ADMIN_USER")
             actual_admin_pw = os.getenv("ADMIN_PASSWORD")
             if un == actual_admin_un and pw==actual_admin_pw:
-                print("successful!!!!!!!!")
                 admin_valid = True
                 message = "Sign-in successful!"
                 session['admin_valid'] = True
