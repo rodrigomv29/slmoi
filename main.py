@@ -282,7 +282,7 @@ def admin():
             # db_path = os.path.join(BASE_DIR, "user_session.db")
             actual_admin_un = os.getenv("ADMIN_USER")
             actual_admin_pw = os.getenv("ADMIN_PASSWORD")
-            if un == actual_admin_un and actual_admin_pw:
+            if un == actual_admin_un and pw==actual_admin_pw:
                 admin_valid = True
                 message = "Sign-in successful!"
                 session['admin_valid'] = True
