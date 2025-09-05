@@ -289,6 +289,7 @@ def admin():
                 message = "Sign-in successful!"
                 session['admin_valid'] = True
                 session['last_activity'] = datetime.now().timestamp()
+                print("SUCESSFUL!!!!!!!!")
             else:
                 message = "Invalid username or password."
         except Exception as e:
