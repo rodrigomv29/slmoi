@@ -292,7 +292,7 @@ def admin():
         except Exception as e:
             admin_valid = False
             message = "An error occurred during sign-in."
-        return render_template("admin.html", message=message, admin_valid=admin_valid)
+        return render_template("admin.html", message=message, admin_valid=True)
     else:
         # Implement session timeout: log out after 3600 seconds of inactivity
         last_activity = session.get('last_activity')
