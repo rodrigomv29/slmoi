@@ -279,7 +279,7 @@ def admin():
     admin_valid = False
     if request.method == "POST":
         pw = request.form.get("password")
-        un = request.form.get('user name')
+        un = request.form.get("username")
         try:
             # db_path = os.path.join(BASE_DIR, "user_session.db")
             actual_admin_un = os.getenv("ADMIN_USER")
@@ -291,6 +291,7 @@ def admin():
                 session['last_activity'] = datetime.now().timestamp()
                 print("SUCESSFUL!!!!!!!!")
             else:
+                print("FAIL!!!")
                 message = "Invalid username or password."
         except Exception as e:
             admin_valid = False
