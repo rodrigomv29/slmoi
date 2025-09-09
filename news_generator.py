@@ -72,7 +72,8 @@ def save_news_to_s3(news_data, filename):
     aws_access_key_id = os.getenv("BUCKETEER_AWS_ACCESS_KEY_ID")
     aws_secret_access_key = os.getenv("BUCKETEER_AWS_SECRET_ACCESS_KEY")
     aws_region = os.getenv("BUCKETEER_AWS_REGION")
-    bucket_name = os.getenv("BUCKETEER_AWS_BUCKET_NAME")
+    bucket_name = os.getenv("BUCKETEER_BUCKET_NAME")
+    print(type(bucket_name))
     s3 = boto3.client(
         's3',
         aws_access_key_id=aws_access_key_id,
@@ -93,5 +94,6 @@ if __name__ == "__main__":
     print(current_time)
     api_news = APINews()
     headlines = api_news.get_news_headlines("general")
+    #print(type(headlines))
     # Save headlines to S3 bucket
     save_news_to_s3(headlines, f"news_headlines_{current_time.strftime('%Y%m%d_%H%M%S')}.txt")
