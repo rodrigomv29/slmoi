@@ -19,7 +19,7 @@ A minimal flask app that integrates openai large language model with several api
    ```
 3. Create a dot env file and set your api key variable as OPENAI_API_KEY inside the dot env file
    ```bash
-   touch .env && echo "OPENAI_API_KEY=<YOUR API KEY HERE> >> .env"
+   touch .env && echo "OPENAI_API_KEY=<YOUR API KEY HERE>" >> .env
    ```
 ## Usage
 Run the main application:
