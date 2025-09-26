@@ -220,7 +220,8 @@ def register():
         un = request.form.get('user-name')
         bd = request.form.get('birthday')
         if pw == pw2:
-            insert_register_data(BASE_DIR, un, pw, bd)
+            #insert_register_data(BASE_DIR, un, pw, bd)
+            print("DONE!!")
     return render_template("register.html")
 
 def insert_register_data(base, username, password, birthday):
