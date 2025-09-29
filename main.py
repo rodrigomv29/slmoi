@@ -22,7 +22,12 @@ client = OpenAI(
 )
 # Set Flask secret key
 app.secret_key = os.getenv("SECRET_KEY")
+# llama output and as a global variable
 llama_output = ""
+# you: 
+you_colon = "You: "
+# Llama: 
+llama_colon = "LLama: "
 
 def init_db():
     """Initialize the prompts database if it does not exist."""
