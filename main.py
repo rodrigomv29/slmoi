@@ -5,6 +5,8 @@ import sqlite3
 from datetime import datetime
 from openai import OpenAI
 import openai
+from conversation import Conversation
+from user import UserInput
 # import function_calling
 import markdown
 from markupsafe import Markup
@@ -28,7 +30,10 @@ llama_output = ""
 you_colon = "You: "
 # Llama: 
 llama_colon = "LLama: "
-
+# last activity
+last_submission_activity = -1
+# conversations
+conversations = []
 
 def init_db():
     """Initialize the prompts database if it does not exist."""
@@ -102,6 +107,11 @@ def index():
         if request.form.get("News"):
             print("NEWS!!")
         llama_output = get_llama_output(user_input, user_name )
+        #full_output_text = you_colon + user_input + llama_colon + llama_output
+        if last_submission_activity == -1 or datetime.now().timestamp() - last_submission_activity > 1800:
+            last_submission_activity = datetime.now().timestamp()
+            conversations = []
+        conversations.append(llama_output)
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         try:
@@ -109,7 +119,7 @@ def index():
         except:
             init_db()
             insert_prompt_input(BASE_DIR, user_input, date, user_name)
-        return render_template('index.html', user_input=user_input, llama_output=llama_output, openai_version=openai_version)
+        return render_template('index.html', user_input=user_input, llama_output=llama_output, openai_version=openai_version, conversations=conversations)
     else:
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         try:
