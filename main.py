@@ -111,6 +111,7 @@ def index():
         if last_submission_activity == -1 or datetime.now().timestamp() - last_submission_activity > 1800:
             last_submission_activity = datetime.now().timestamp()
             conversations = []
+        conv_object = Conversation(user_input, user_name, )
         conversations.append(llama_output)
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
