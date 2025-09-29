@@ -29,6 +29,7 @@ you_colon = "You: "
 # Llama: 
 llama_colon = "LLama: "
 
+
 def init_db():
     """Initialize the prompts database if it does not exist."""
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
