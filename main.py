@@ -60,7 +60,7 @@ def get_chat_completions_info(client):
         return client.usage.total_tokens
     return 0
 
-def get_llama_output(inp, user_name, fun_call=1, conversation_history=None):
+def get_llama_output(inp, user_name, fun_call=1, conversation_history=None, is_markdown=False):
     """Get output from the Llama model, optionally using conversation history and function calling."""
     # TODO: ADD MECHANISM TO LOAD CONVERSATION HISTORY FROM SPECIFIC USER 
     if conversation_history is None:
@@ -80,7 +80,8 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None):
         except Exception as e:
             print("An error occurred:", e)
             outp = None  # or some fallback value
-        outp = Markup(markdown.markdown(outp))
+        if is_markdown:
+            outp = Markup(markdown.markdown(outp))
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
         insert_conversation_history(BASE_DIR, inp, date, user_name, outp)
@@ -108,11 +109,8 @@ def index():
             print("NEWS!!")
         llama_output = get_llama_output(user_input, user_name )
         #full_output_text = you_colon + user_input + llama_colon + llama_output
-        if last_submission_activity == -1 or datetime.now().timestamp() - last_submission_activity > 1800:
-            last_submission_activity = datetime.now().timestamp()
-            conversations = []
-        conv_object = Conversation(user_input, user_name, )
-        conversations.append(llama_output)
+        conv_object = Conversation(user_input,llama_output)
+        conversations.append(conv_object)
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         try:
@@ -120,7 +118,7 @@ def index():
         except:
             init_db()
             insert_prompt_input(BASE_DIR, user_input, date, user_name)
-        return render_template('index.html', user_input=user_input, llama_output=llama_output, openai_version=openai_version, conversations=conversations)
+        return render_template('index.html', user_input=user_input, conversations=conversations, openai_version=openai_version)
     else:
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         try:
@@ -334,7 +332,6 @@ if __name__ == '__main__':
     # Entry point for running the Flask app
     init_db()
     app.run(debug=True)
-
     """
     print("main method: ")
     print(get_client_info(client))
