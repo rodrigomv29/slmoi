@@ -148,7 +148,7 @@
             {% for conversation in conversations %}
                 <div class="response">
                     <p>You: {{conversation.user_input}}</p>
-                    <p>Llama: {{conversation.output}}</p>
+                    <p>Llama: {{conversation.output | safe}}</p>
                 </div>
             {% endfor %}
         {% endif %}
