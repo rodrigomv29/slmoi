@@ -145,7 +145,6 @@
             <button class="button" type="submit">Send</button>
         </form>
         {% if user_input%}
-        {% for conversation in conversations %}
             <div class="response">
                 <p>You: {{user_input}}</p>
                 <p>Llama: {{llama_output | safe}}</p>
