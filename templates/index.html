@@ -145,10 +145,12 @@
             <button class="button" type="submit">Send</button>
         </form>
         {% if user_input%}
-            <div class="response">
-                <p>You: {{user_input}}</p>
-                <p>Llama: {{llama_output | safe}}</p>
-            </div>
+            {% for conversation in conversations %}
+                <div class="response">
+                    <p>You: {{conversation.user_input}}</p>
+                    <p>Llama: {{conversation.output}}</p>
+                </div>
+            {% endfor %}
         {% endif %}
     </div>
     <div style="text-align:center; color:#fff; margin-top:20px;">
