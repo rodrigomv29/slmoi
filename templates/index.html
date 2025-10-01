@@ -144,6 +144,7 @@
             </div>
             <button class="button" type="submit">Send</button>
         </form>
+
         {% if user_input%}
             <div class="response">
             {% for conversation in conversations %}
@@ -152,6 +153,7 @@
             {% endfor %}
             </div>
         {% endif %}
+        
     </div>
     <div style="text-align:center; color:#fff; margin-top:20px;">
         <small>OpenAI Python package version: {{ openai_version }}</small>
