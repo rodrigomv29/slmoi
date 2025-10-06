@@ -331,7 +331,7 @@ def admin():
 if __name__ == '__main__':
     # Entry point for running the Flask app
     init_db()
-    app.run(debug=True)
+    app.run(debug=False)
     """
     print("main method: ")
     print(get_client_info(client))
