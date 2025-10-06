@@ -141,6 +141,8 @@
                 <label for="news">News</label>
                 <input type="radio" id="weather" name="function_calling" value="Weather">
                 <label for="weather">Weather</label>
+                <input type="radio" id="wikipedia" name="function_calling" value="Wikipedia">
+                <label for="wikipedia">Wikipedia</label>
             </div>
             <button class="button" type="submit">Send</button>
         </form>
@@ -153,7 +155,7 @@
             {% endfor %}
             </div>
         {% endif %}
-        
+
     </div>
     <div style="text-align:center; color:#fff; margin-top:20px;">
         <small>OpenAI Python package version: {{ openai_version }}</small>
