@@ -26,8 +26,12 @@ class News:
 class APINews(News):
     def get_news(self):
         # Placeholder for API-based news fetching logic
-        return "News from API source."
-
+        categories = ['business', 'entertainment', 'general', 'health', 'science', 'sports', 'technology']
+        category="general"
+        modified_url = f"https://newsapi.org/v2/top-headlines?country=us&category={category}&apiKey={api_key}"
+        response = requests.get(modified_url)
+        data = response.json()
+        return data
     def get_news_headlines(self, category):
         categories = ['business', 'entertainment', 'general', 'health', 'science', 'sports', 'technology']
         if category not in categories:
@@ -39,7 +43,6 @@ class APINews(News):
         for i in range(len(data['articles'])):
             result.append(data["articles"][i]['title'])
         
-        return str(result) + "\n\n**END OF LIST**\n\n"
         return str(result) + "\n\n**END OF LIST**\n\n"
     def get_news(self):
         # Placeholder for RSS-based news fetching logic
@@ -93,7 +96,7 @@ if __name__ == "__main__":
     current_time = datetime.datetime.now()
     print(current_time)
     api_news = APINews()
-    headlines = api_news.get_news_headlines("general")
+    headlines = api_news.get_news()
     print(headlines)
     #print(type(headlines))
     # Save headlines to S3 bucket
