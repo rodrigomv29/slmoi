@@ -94,6 +94,7 @@ if __name__ == "__main__":
     print(current_time)
     api_news = APINews()
     headlines = api_news.get_news_headlines("general")
+    print(headlines)
     #print(type(headlines))
     # Save headlines to S3 bucket
     # save_news_to_s3(headlines, f"news_headlines_{current_time.strftime('%Y%m%d_%H%M%S')}.txt")
