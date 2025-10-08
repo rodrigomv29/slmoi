@@ -95,39 +95,6 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None, is_m
     elif fun_call==3:
         # refer to function_calling.py
         pass
-
-@app.route("/", methods=["GET", "POST"])
-def index():
-    """Main route for chat interface. Handles user input and displays Llama output."""
-    openai_version = get_openai_version()
-    if request.method == "POST":
-        user_input = request.form.get("user_input")
-        user_name = request.form.get('user_name')
-        if request.form.get("Weather"):
-            print("WEATHER!!")
-        if request.form.get("News"):
-            print("NEWS!!")
-        llama_output = get_llama_output(user_input, user_name )
-        #full_output_text = you_colon + user_input + llama_colon + llama_output
-        conv_object = Conversation(user_input,llama_output)
-        conversations.append(conv_object)
-        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        try:
-            insert_prompt_input(BASE_DIR, user_input, date, user_name)
-        except:
-            init_db()
-            insert_prompt_input(BASE_DIR, user_input, date, user_name)
-        return render_template('index.html', user_input=user_input, conversations=conversations, openai_version=openai_version)
-    else:
-        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        try:
-            rows = select_prompts(BASE_DIR, "signin")
-        except sqlite3.OperationalError:
-            init_db()
-            rows = select_prompts(BASE_DIR)
-        return render_template('index.html', rows=rows, openai_version=openai_version)
-
 def insert_conversation_history(base, inp, d, uname, output):
     """Insert a conversation record into the conversations database."""
     db_path = os.path.join(base, "conversations.db")
@@ -225,6 +192,38 @@ def select_prompts(base, query="prompts"):
                 c.execute("SELECT * FROM sign_in_users")
                 rows = c.fetchall()
             return rows
+
+@app.route("/", methods=["GET", "POST"])
+def index():
+    """Main route for chat interface. Handles user input and displays Llama output."""
+    openai_version = get_openai_version()
+    if request.method == "POST":
+        user_input = request.form.get("user_input")
+        user_name = request.form.get('user_name')
+        if request.form.get("Weather"):
+            print("WEATHER!!")
+        if request.form.get("News"):
+            print("NEWS!!")
+        llama_output = get_llama_output(user_input, user_name )
+        #full_output_text = you_colon + user_input + llama_colon + llama_output
+        conv_object = Conversation(user_input,llama_output)
+        conversations.append(conv_object)
+        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        try:
+            insert_prompt_input(BASE_DIR, user_input, date, user_name)
+        except:
+            init_db()
+            insert_prompt_input(BASE_DIR, user_input, date, user_name)
+        return render_template('index.html', user_input=user_input, conversations=conversations, openai_version=openai_version)
+    else:
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        try:
+            rows = select_prompts(BASE_DIR, "signin")
+        except sqlite3.OperationalError:
+            init_db()
+            rows = select_prompts(BASE_DIR)
+        return render_template('index.html', rows=rows, openai_version=openai_version)
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
