@@ -30,8 +30,8 @@ class APINews(News):
         category="general"
         modified_url = f"https://newsapi.org/v2/top-headlines?country=us&category={category}&apiKey={api_key}"
         response = requests.get(modified_url)
-        data = response.json()
-        return data
+        # data = response.json()
+        return response.json()
     def get_news_headlines(self, category):
         categories = ['business', 'entertainment', 'general', 'health', 'science', 'sports', 'technology']
         if category not in categories:
@@ -42,11 +42,15 @@ class APINews(News):
         data = response.json()
         for i in range(len(data['articles'])):
             result.append(data["articles"][i]['title'])
-        
         return str(result) + "\n\n**END OF LIST**\n\n"
-    def get_news(self):
-        # Placeholder for RSS-based news fetching logic
-        return "News from RSS feed."
+    def get_news_readable(self, news, i):
+        try:
+            news_source = news['articles'][i]['source']
+            news_title = news['articles'][i]['title']
+            news_url = news['articles'][i]['url']
+        except IndexError:
+            return ""
+        return f"{news_title}\n{news_source}\n{news_url}\n"
 
 class LocalNews(News):
     def get_news(self):
@@ -96,8 +100,14 @@ if __name__ == "__main__":
     current_time = datetime.datetime.now()
     print(current_time)
     api_news = APINews()
-    headlines = api_news.get_news()
-    print(headlines)
+    news = api_news.get_news()
+    news_output = ""
+    for i in range(news['totalResults']):
+        temp = api_news.get_news_readable(news, i)
+        if temp == "":
+            continue
+        news_output += api_news.get_news_readable(news, i)
+    print(news_output)
     #print(type(headlines))
     # Save headlines to S3 bucket
     # save_news_to_s3(headlines, f"news_headlines_{current_time.strftime('%Y%m%d_%H%M%S')}.txt")
