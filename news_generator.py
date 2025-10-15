@@ -33,7 +33,7 @@ class APINews(News):
         # data = response.json()
         return response.json()
     @staticmethod
-    def get_news_headlines(self, category):
+    def get_news_headlines(category):
         categories = ['business', 'entertainment', 'general', 'health', 'science', 'sports', 'technology']
         if category not in categories:
             return "NOT A CATEGORY!"
