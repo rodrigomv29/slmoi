@@ -204,7 +204,7 @@ def index():
             print("WEATHER!!")
         if request.form.get("News"):
             print("NEWS!!")
-        llama_output = get_llama_output(user_input, user_name )
+        llama_output = get_llama_output(user_input, user_name, is_markdown=True )
         #full_output_text = you_colon + user_input + llama_colon + llama_output
         conv_object = Conversation(user_input,llama_output)
         conversations.append(conv_object)
