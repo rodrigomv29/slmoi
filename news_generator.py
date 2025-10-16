@@ -32,7 +32,6 @@ class APINews(News):
         response = requests.get(modified_url)
         # data = response.json()
         return response.json()
-    @staticmethod
     def get_news_headlines(category):
         categories = ['business', 'entertainment', 'general', 'health', 'science', 'sports', 'technology']
         if category not in categories:
@@ -43,7 +42,7 @@ class APINews(News):
         data = response.json()
         for i in range(len(data['articles'])):
             result.append(data["articles"][i]['title'])
-        return str(result) + "\n\n**END OF LIST**\n\n"
+        return "\n\n**START OF LIST**\n\n" + str(result) + "\n\n**END OF LIST**\n\n"
     def get_news_readable(self, news, i):
         try:
             news_source = news['articles'][i]['source']
