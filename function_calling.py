@@ -1,99 +1,89 @@
-"""
+
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
-import news_generator
+from news_generator import APINews
 import json
+
+
 load_dotenv()
-initial commit
 
 if __name__ == "__main__":
 
-    openai_api_key = os.getenv("OPENAI_API_KEY")
+    api_key = os.getenv("OPENAI_API_KEY")
 
     client = OpenAI(
-        api_key = openai_api_key,
-        base_url = "https://api.llama-api.com"
+        api_key = api_key,
     )
-    messages=[
-            {"role": "user", "content": "Is Vladmir Putin on the news today?"}
-    ]
-    model="llama3.1-70b"
-    tools = [{
-            "type": "function",
-            "function": {
-                "name": "get_news_headlines",
-                "description": "Get current news headlines given a news category",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "category": {
-                            "type": "string",
-                            "enum": [
-                                "business",
-                                "entertainment",
-                                "general",
-                                "health",
-                                "science",
-                                "sports",
-                                "technology"
-                            ]
-                        },
-                    },
-                    "required": ["category"],
-                    "additionalProperties": False
-                },
-            "strict": True
-            }
-        },
+    tools = [
         {
-    "type": "function",
-    "function": {
-        "name": "get_weather",
-        "description": "Get current weather data given a location",
-        "parameters": {
-        "type": "object",
-        "properties": {
-            "longitude": {
-            "type": "number"
+            "type": "function",
+            "name": "get_news_headlines",
+            "description": "Get current news headlines given a news category",
+            "parameters":{
+                "type": "object",
+                "properties": {
+                    "category": {
+                        "type":"string",
+                        "enum": [
+                            "business",
+                            "entertainment",
+                            "general",
+                            "health",
+                            "science",
+                            "sports",
+                            "technology"
+                        ],
+                        "description": "News category for the articles that are to be returned"
+
+                    }
+                },
+                
+                "required": ["category"],
+                "additionalProperties": False
             },
-            "latitude": {
-            "type": "number"
-            }
-        },
-        "required": ["longitude", "latitude"],
-        "additionalProperties": False 
+            "strict": True
+            
+
         }
-    }
-    }
     ]
-    completion = client.chat.completions.create(
-        model="llama3.1-70b",
-        messages=messages,
-        tools=tools,
-    )
 
+# Create a running input list we will add to over time
+input_list = [
+    {"role": "user", "content": "What are the news today regarding sports"}
+]
 
-    tool_call_str = completion.choices[0].message.tool_calls
-    if tool_call_str is None:
-        print(completion.choices[0].message.content)
-    else:
-        tool_call = json.loads(tool_call_str)
-        # print(json.dumps(tool_call, indent=2))
-        args = tool_call[0]['function']['arguments']
-        arg_json = json.loads(args)
-        result = news_generator.get_news_headlines(arg_json["category"])
-        messages.append(completion.choices[0].message)
+# 2. Prompt the model with tools defined
+response = client.responses.create(
+    model="gpt-4.1",
+    tools=tools,
+    input=input_list,
+)
 
-        messages.append({                               # append result message
-            "role": "tool",
-            "tool_call_id": tool_call[0]['id'],
-            "content": str(result)
+news = APINews()
+input_list+=response.output
+for item in response.output:
+    if item.type == "function_call":
+        if item.name == "get_news_headlines":
+            argument_dict = json.loads(item.arguments)
+            headlines = news.get_news_headlines(argument_dict['category'])
+            input_list.append({
+                "type": "function_call_output",
+                "call_id": item.call_id,
+                "output": json.dumps({
+                    "headlines": headlines
+                })
             })
-        completion_2 = client.chat.completions.create(
-            model="llama3.1-70b",
-            messages=messages,
-            tools=tools,
-        )
+print("final input: ")
+print(input_list)
 
-        print(completion_2.choices[0])"""
+response = client.responses.create(
+    model="gpt-5",
+    instructions="Respond only with news generated by a tool.",
+    tools=tools,
+    input=input_list,
+)
+
+print("Final output:")
+print(response.model_dump_json(indent=2))
+print("\n" + response.output_text)
