@@ -68,19 +68,13 @@ def news_function_call(key):
                         "headlines": headlines
                     })
                 })
-    print("final input: ")
-    print(input_list)
-
     response = client.responses.create(
         model="gpt-5",
         instructions="Answer prompt to summarize the output received by tool. Separate every headline into its own paragaph.",
         tools=tools,
         input=input_list,
     )
-
-    print("Final output:")
-    print(response.model_dump_json(indent=2))
-    print("\n" + response.output_text)
+    return response.output_text
 if __name__ == "__main__":
-    
+
     news_function_call(api_key)
