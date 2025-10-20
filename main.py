@@ -12,7 +12,7 @@ import markdown
 from markupsafe import Markup
 import boto3
 from botocore.exceptions import NoCredentialsError
-
+from news_generator import APINews
 # Initializing Flask App
 app = Flask(__name__)
 # Configuring OpenAI app using environment variables
@@ -331,7 +331,3 @@ if __name__ == '__main__':
     # Entry point for running the Flask app
     init_db()
     app.run(debug=False)
-    """
-    print("main method: ")
-    print(get_client_info(client))
-    """
