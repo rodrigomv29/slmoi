@@ -201,10 +201,12 @@ def index():
     if request.method == "POST":
         user_input = request.form.get("user_input")
         user_name = request.form.get('user_name')
-        if request.form.get("Weather"):
+        if request.form.get("function_calling")=="Weather":
             print("WEATHER!!")
-        if request.form.get("News"):
+        if request.form.get("function_calling") == "News":
             print("NEWS!!")
+        if request.form.get("function_calling") == "Wikipedia":
+            print("WIKIPEDIA!!")
         llama_output = get_llama_output(user_input, user_name, is_markdown=True )
         #full_output_text = you_colon + user_input + llama_colon + llama_output
         conv_object = Conversation(user_input,llama_output)
