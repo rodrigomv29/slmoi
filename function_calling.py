@@ -54,7 +54,7 @@ def news_function_call(key):
         input=input_list,
     )
 
-    news = APINews()
+    news = APINews(key)
     input_list+=response.output
     for item in response.output:
         if item.type == "function_call":
@@ -77,4 +77,4 @@ def news_function_call(key):
     return response.output_text
 if __name__ == "__main__":
 
-    news_function_call(api_key)
+    print(news_function_call(api_key))
