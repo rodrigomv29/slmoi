@@ -24,11 +24,13 @@ class News:
         raise NotImplementedError("Subclasses must implement get_news method.")
 
 class APINews(News):
+    def __init__(self, api_key):
+        self.api_key =api_key
     def get_news(self):
         # Placeholder for API-based news fetching logic
         categories = ['business', 'entertainment', 'general', 'health', 'science', 'sports', 'technology']
         category="general"
-        modified_url = f"https://newsapi.org/v2/top-headlines?country=us&category={category}&apiKey={api_key}"
+        modified_url = f"https://newsapi.org/v2/top-headlines?country=us&category={category}&apiKey={self.api_key}"
         response = requests.get(modified_url)
         # data = response.json()
         return response.json()

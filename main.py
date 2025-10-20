@@ -12,7 +12,8 @@ import markdown
 from markupsafe import Markup
 import boto3
 from botocore.exceptions import NoCredentialsError
-
+from news_generator import APINews
+import function_calling
 # Initializing Flask App
 app = Flask(__name__)
 # Configuring OpenAI app using environment variables
@@ -85,14 +86,25 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None, is_m
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
         insert_conversation_history(BASE_DIR, inp, date, user_name, outp)
-        # print("TOTAL TOKENS: ", end="")
-        # print(get_chat_completions_info(response))
-
         return outp
+    
+    # NEWS
     elif fun_call==2:
         # refer to function_calling.py
-        pass
+        news_api_key = os.getenv("NEWS_API")
+        outp = function_calling.news_function_call(news_api_key)
+        if is_markdown:
+            outp = Markup(markdown.markdown(outp))
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
+        insert_conversation_history(BASE_DIR, inp, date, user_name, outp)
+        return outp
+    # WEATHER
     elif fun_call==3:
+        # refer to function_calling.py
+        pass
+    # WIKIPEDIA
+    elif fun_call==4:
         # refer to function_calling.py
         pass
 def insert_conversation_history(base, inp, d, uname, output):
@@ -200,22 +212,35 @@ def index():
     if request.method == "POST":
         user_input = request.form.get("user_input")
         user_name = request.form.get('user_name')
-        if request.form.get("Weather"):
+        if request.form.get("function_calling")=="Weather":
             print("WEATHER!!")
-        if request.form.get("News"):
-            print("NEWS!!")
-        llama_output = get_llama_output(user_input, user_name, is_markdown=True )
-        #full_output_text = you_colon + user_input + llama_colon + llama_output
-        conv_object = Conversation(user_input,llama_output)
-        conversations.append(conv_object)
-        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        try:
-            insert_prompt_input(BASE_DIR, user_input, date, user_name)
-        except:
-            init_db()
-            insert_prompt_input(BASE_DIR, user_input, date, user_name)
-        return render_template('index.html', user_input=user_input, conversations=conversations, openai_version=openai_version)
+        if request.form.get("function_calling") == "News":
+            llama_output = get_llama_output(user_input, user_name, fun_call=2,is_markdown=True)
+            conv_object = Conversation(user_input,llama_output)
+            conversations.append(conv_object)
+            date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+            try:
+                insert_prompt_input(BASE_DIR, user_input, date, user_name)
+            except:
+                init_db()
+                insert_prompt_input(BASE_DIR, user_input, date, user_name)
+            return render_template('index.html', user_input=user_input, conversations=conversations, openai_version=openai_version)
+        if request.form.get("function_calling") == "Wikipedia":
+            print("WIKIPEDIA!!")
+        else:
+            llama_output = get_llama_output(user_input, user_name, is_markdown=True)
+            #full_output_text = you_colon + user_input + llama_colon + llama_output
+            conv_object = Conversation(user_input,llama_output)
+            conversations.append(conv_object)
+            date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+            try:
+                insert_prompt_input(BASE_DIR, user_input, date, user_name)
+            except:
+                init_db()
+                insert_prompt_input(BASE_DIR, user_input, date, user_name)
+            return render_template('index.html', user_input=user_input, conversations=conversations, openai_version=openai_version)
     else:
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         try:
@@ -331,7 +356,3 @@ if __name__ == '__main__':
     # Entry point for running the Flask app
     init_db()
     app.run(debug=False)
-    """
-    print("main method: ")
-    print(get_client_info(client))
-    """

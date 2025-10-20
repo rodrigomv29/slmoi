@@ -5,17 +5,7 @@ import os
 from news_generator import APINews
 import json
 
-
-load_dotenv()
-
-if __name__ == "__main__":
-
-    api_key = os.getenv("OPENAI_API_KEY")
-
-    client = OpenAI(
-        api_key = api_key,
-    )
-    tools = [
+tools = [
         {
             "type": "function",
             "name": "get_news_headlines",
@@ -46,45 +36,45 @@ if __name__ == "__main__":
             
 
         }
-    ]
-
-# Create a running input list we will add to over time
-input_list = [
-    {"role": "user", "content": "What are the general news today?"}
 ]
+load_dotenv()
+api_key = os.getenv("OPENAI_API_KEY")
 
-# 2. Prompt the model with tools defined
-response = client.responses.create(
-    model="gpt-4.1",
-    tools=tools,
-    input=input_list,
-)
+def news_function_call(key):
+    input_list = [
+    {"role": "user", "content": "What are the general news today?"}
+    ]
+    # 2. Prompt the model with tools defined
+    client = OpenAI(
+        api_key = api_key,
+    )
+    response = client.responses.create(
+        model="gpt-4.1",
+        tools=tools,
+        input=input_list,
+    )
 
-news = APINews()
-input_list+=response.output
-for item in response.output:
-    if item.type == "function_call":
-        if item.name == "get_news_headlines":
-            argument_dict = json.loads(item.arguments)
-            print(argument_dict)
-            headlines = news.get_news_headlines(argument_dict['category'])
-            input_list.append({
-                "type": "function_call_output",
-                "call_id": item.call_id,
-                "output": json.dumps({
-                    "headlines": headlines
+    news = APINews(key)
+    input_list+=response.output
+    for item in response.output:
+        if item.type == "function_call":
+            if item.name == "get_news_headlines":
+                argument_dict = json.loads(item.arguments)
+                headlines = news.get_news_headlines(argument_dict['category'])
+                input_list.append({
+                    "type": "function_call_output",
+                    "call_id": item.call_id,
+                    "output": json.dumps({
+                        "headlines": headlines
+                    })
                 })
-            })
-print("final input: ")
-print(input_list)
+    response = client.responses.create(
+        model="gpt-5",
+        instructions="Answer prompt to summarize the output received by tool. Separate every headline into its own paragaph.",
+        tools=tools,
+        input=input_list,
+    )
+    return response.output_text
+if __name__ == "__main__":
 
-response = client.responses.create(
-    model="gpt-5",
-    instructions="Answer prompt to summarize the output received by tool. Separate every headline into its own paragaph.",
-    tools=tools,
-    input=input_list,
-)
-
-print("Final output:")
-print(response.model_dump_json(indent=2))
-print("\n" + response.output_text)
+    print(news_function_call(api_key))
