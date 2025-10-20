@@ -13,6 +13,7 @@ from markupsafe import Markup
 import boto3
 from botocore.exceptions import NoCredentialsError
 from news_generator import APINews
+import function_calling
 # Initializing Flask App
 app = Flask(__name__)
 # Configuring OpenAI app using environment variables
