@@ -82,4 +82,5 @@ def news_function_call(key):
     print(response.model_dump_json(indent=2))
     print("\n" + response.output_text)
 if __name__ == "__main__":
+    
     news_function_call(api_key)
