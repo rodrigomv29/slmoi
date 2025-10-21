@@ -42,9 +42,11 @@ class APINews(News):
         response = requests.get(modified_url)
         result = []
         data = response.json()
+        if not isinstance(data, dict):
+            return "News Object not available"
         for i in range(len(data['articles'])):
             result.append(data["articles"][i]['title'])
-        return "\n\n**START OF LIST**\n\n" + str(data) + "\n\n**END OF LIST**\n\n"
+        return "\n\n**START OF LIST**\n\n" + str(result) + "\n\n**END OF LIST**\n\n"
     def get_news_readable(self, news, i):
         try:
             news_source = news['articles'][i]['source']
@@ -101,7 +103,9 @@ def save_news_to_s3(news_data, filename):
 if __name__ == "__main__":
     current_time = datetime.datetime.now()
     print(current_time)
-    api_news = APINews()
+    api_news = APINews("1bdd73db17504d748399ca2622fd195d")
+    print(api_news.get_news_headlines("general"))
+    """
     news = api_news.get_news()
     news_output = ""
     for i in range(news['totalResults']):
@@ -109,7 +113,7 @@ if __name__ == "__main__":
         if temp == "":
             continue
         news_output += api_news.get_news_readable(news, i)
-    print(news_output)
+    """
     #print(type(headlines))
     # Save headlines to S3 bucket
     # save_news_to_s3(headlines, f"news_headlines_{current_time.strftime('%Y%m%d_%H%M%S')}.txt")
