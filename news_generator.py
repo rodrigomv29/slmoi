@@ -44,7 +44,7 @@ class APINews(News):
         data = response.json()
         for i in range(len(data['articles'])):
             result.append(data["articles"][i]['title'])
-        return "\n\n**START OF LIST**\n\n" + str(result) + "\n\n**END OF LIST**\n\n"
+        return "\n\n**START OF LIST**\n\n" + str(data) + "\n\n**END OF LIST**\n\n"
     def get_news_readable(self, news, i):
         try:
             news_source = news['articles'][i]['source']
