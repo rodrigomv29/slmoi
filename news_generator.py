@@ -44,8 +44,11 @@ class APINews(News):
         data = response.json()
         if not isinstance(data, dict):
             return "News Object not available"
-        for i in range(len(data['articles'])):
-            result.append(data["articles"][i]['title'])
+        try:
+            for i in range(len(data['articles'])):
+                result.append(data['articles'][i]['title'])
+        except KeyError:
+            return data
         return "\n\n**START OF LIST**\n\n" + str(result) + "\n\n**END OF LIST**\n\n"
     def get_news_readable(self, news, i):
         try:
