@@ -70,7 +70,7 @@ def news_function_call(key):
                 })
     response = client.responses.create(
         model="gpt-5",
-        instructions="Answer prompt to summarize the output received by tool. Separate every headline into its own paragaph.",
+        instructions="Answer prompt to summarize the output received by tool. Separate every headline into its own paragaph.If error is seen please display error message shown by the API",
         tools=tools,
         input=input_list,
     )
