@@ -104,11 +104,12 @@ def save_news_to_s3(news_data, filename):
 
 # Example usage:
 if __name__ == "__main__":
+    """
     current_time = datetime.datetime.now()
     print(current_time)
-    api_news = APINews("1bdd73db17504d748399ca2622fd195d")
-    print(api_news.get_news_headlines("general"))
     """
+    api_news = APINews(api_key)
+    print(api_news.get_news_headlines("general"))
     news = api_news.get_news()
     news_output = ""
     for i in range(news['totalResults']):
@@ -116,7 +117,6 @@ if __name__ == "__main__":
         if temp == "":
             continue
         news_output += api_news.get_news_readable(news, i)
-    """
     #print(type(headlines))
     # Save headlines to S3 bucket
     # save_news_to_s3(headlines, f"news_headlines_{current_time.strftime('%Y%m%d_%H%M%S')}.txt")
