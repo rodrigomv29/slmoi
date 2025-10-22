@@ -38,7 +38,7 @@ class APINews(News):
         categories = ['business', 'entertainment', 'general', 'health', 'science', 'sports', 'technology']
         if category not in categories:
             return "NOT A CATEGORY!"
-        modified_url = f"https://newsapi.org/v2/top-headlines?country=us&category={category}&apiKey={api_key}"
+        modified_url = f"https://newsapi.org/v2/top-headlines?country=us&category={category}&apiKey={self.api_key}"
         response = requests.get(modified_url)
         result = []
         data = response.json()
@@ -87,7 +87,6 @@ def save_news_to_s3(news_data, filename):
     aws_secret_access_key = os.getenv("BUCKETEER_AWS_SECRET_ACCESS_KEY")
     aws_region = os.getenv("BUCKETEER_AWS_REGION")
     bucket_name = os.getenv("BUCKETEER_BUCKET_NAME")
-    print(type(bucket_name))
     s3 = boto3.client(
         's3',
         aws_access_key_id=aws_access_key_id,
@@ -104,12 +103,10 @@ def save_news_to_s3(news_data, filename):
 
 # Example usage:
 if __name__ == "__main__":
-    """
+    
     current_time = datetime.datetime.now()
     print(current_time)
-    """
     api_news = APINews(api_key)
-    print(api_news.get_news_headlines("general"))
     news = api_news.get_news()
     news_output = ""
     for i in range(news['totalResults']):
@@ -117,6 +114,6 @@ if __name__ == "__main__":
         if temp == "":
             continue
         news_output += api_news.get_news_readable(news, i)
-    #print(type(headlines))
     # Save headlines to S3 bucket
-    # save_news_to_s3(headlines, f"news_headlines_{current_time.strftime('%Y%m%d_%H%M%S')}.txt")
+    print(news_output)
+    #save_news_to_s3(news_output, f"news_headlines_{current_time.strftime('%Y%m%d_%H%M%S')}.txt")
