@@ -61,8 +61,8 @@ class APINews(News):
             for i in range(len(data['articles'])):
                 result.append(data['articles'][i]['title'])
         except KeyError:
-            #f = get_most_recent_news()
-            # backup = show_contents_of_file(f)
+            f = get_most_recent_news()
+            backup = show_contents_of_file(f)
             return data
         return "\n\n**START OF LIST**\n\n" + str(result) + "\n\n**END OF LIST**\n\n"
     def get_news_readable(self, news, i):
