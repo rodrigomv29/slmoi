@@ -135,7 +135,6 @@ def show_contents_of_file(filename):
     except Exception as e:
         return f"Error retrieving file: {e}"
 
-# Example usage:
 if __name__ == "__main__":
 
 
