@@ -18,6 +18,19 @@ from botocore.exceptions import NoCredentialsError
 load_dotenv()
 api_key = os.getenv("NEWS_API")
 url = f"https://newsapi.org/v2/top-headlines?country=us&apiKey={api_key}"
+def initialize_boto_client():
+    load_dotenv()
+    aws_access_key_id = os.getenv("BUCKETEER_AWS_ACCESS_KEY_ID")
+    aws_secret_access_key = os.getenv("BUCKETEER_AWS_SECRET_ACCESS_KEY")
+    aws_region = os.getenv("BUCKETEER_AWS_REGION")
+    s3 = boto3.client(
+        's3',
+        aws_access_key_id=aws_access_key_id,
+        aws_secret_access_key=aws_secret_access_key,
+        region_name=aws_region
+    )
+    return s3
+
 
 class News:
     def get_news(self):
@@ -103,7 +116,7 @@ def save_news_to_s3(news_data, filename):
     except Exception as e:
         print(f"Error saving news data to S3: {e}")
 def get_most_recent_news():
-    s3=boto3.client('s3')
+    s3=initialize_boto_client()
     bucket_name = os.getenv("BUCKETEER_BUCKET_NAME")
     response = s3.list_objects_v2(Bucket=bucket_name)
     if "Contents" in response:
