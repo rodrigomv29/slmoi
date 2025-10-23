@@ -14,6 +14,8 @@ import boto3
 from botocore.exceptions import NoCredentialsError
 from news_generator import APINews
 import function_calling
+import news_generator
+import socket
 # Initializing Flask App
 app = Flask(__name__)
 # Configuring OpenAI app using environment variables
@@ -91,6 +93,10 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None, is_m
     # NEWS
     elif fun_call==2:
         # refer to function_calling.py
+        if not socket.gethostname() == os.getenv("HOSTNAME"):
+            file_key = news_generator.get_most_recent_news()
+            return news_generator.show_contents_of_file(file_key)
+
         news_api_key = os.getenv("NEWS_API")
         outp = function_calling.news_function_call(news_api_key)
         if is_markdown:
