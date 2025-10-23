@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import datetime
 import boto3
 from botocore.exceptions import NoCredentialsError
+import socket
 
 
 # NEWSAPI CLASS
