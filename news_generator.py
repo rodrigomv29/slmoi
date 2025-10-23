@@ -100,12 +100,38 @@ def save_news_to_s3(news_data, filename):
         print("AWS credentials not found. News data not saved to S3.")
     except Exception as e:
         print(f"Error saving news data to S3: {e}")
+def get_most_recent_news():
+    s3=boto3.client('s3')
+    bucket_name = os.getenv("BUCKETEER_BUCKET_NAME")
+    response = s3.list_objects_v2(Bucket=bucket_name)
+    if "Contents" in response:
+        sorted_objects = sorted(response["Contents"], key=lambda obj: obj["LastModified"], reverse=True)
+        most_recent_file_key = sorted_objects[0]["Key"]
+        return most_recent_file_key
+    return None
+def show_contents_of_file(filename):
+    s3 = boto3.client('s3')
+    bucket_name = os.getenv("BUCKETEER_BUCKET_NAME")
+    try:
+        response = s3.get_object(Bucket=bucket_name, Key=filename)
+        file_content = response['Body'].read().decode('utf-8')
+        return file_content
+    except Exception as e:
+        return f"Error retrieving file: {e}"
 
 # Example usage:
 if __name__ == "__main__":
-    
+
+
     current_time = datetime.datetime.now()
     print(current_time)
+    
+    file_key = get_most_recent_news()
+    print("CONTENTS OF FILE:\n\n\n")
+    print(show_contents_of_file(file_key))
+    
+
+    """
     api_news = APINews(api_key)
     news = api_news.get_news()
     news_output = ""
@@ -114,6 +140,7 @@ if __name__ == "__main__":
         if temp == "":
             continue
         news_output += api_news.get_news_readable(news, i)
-    # Save headlines to S3 bucket
     print(news_output)
-    #save_news_to_s3(news_output, f"news_headlines_{current_time.strftime('%Y%m%d_%H%M%S')}.txt")
+    save_news_to_s3(news_output, f"news_headlines_{current_time.strftime('%Y%m%d_%H%M%S')}.txt")
+    
+"""
