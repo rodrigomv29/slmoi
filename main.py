@@ -94,8 +94,9 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None, is_m
     elif fun_call==2:
         # refer to function_calling.py
         if not socket.gethostname() == os.getenv("HOSTNAME"):
-            file_key = news_generator.get_most_recent_news()
-            return news_generator.show_contents_of_file(file_key)
+            aws_client = news_generator.initialize_boto_client()
+            file_key = news_generator.get_most_recent_news(aws_client)
+            return news_generator.show_contents_of_file(aws_client, file_key)
 
         news_api_key = os.getenv("NEWS_API")
         outp = function_calling.news_function_call(news_api_key)
