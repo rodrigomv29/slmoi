@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, url_for, session
+from flask import Flask, request, render_template, session
 from dotenv import load_dotenv
 import os
 import sqlite3
@@ -6,13 +6,10 @@ from datetime import datetime
 from openai import OpenAI
 import openai
 from conversation import Conversation
-from user import UserInput
-# import function_calling
 import markdown
 from markupsafe import Markup
 import boto3
 from botocore.exceptions import NoCredentialsError
-from news_generator import APINews
 import function_calling
 import news_generator
 import socket
@@ -29,12 +26,6 @@ client = OpenAI(
 app.secret_key = os.getenv("SECRET_KEY")
 # llama output and as a global variable
 llama_output = ""
-# you: 
-you_colon = "You: "
-# Llama: 
-llama_colon = "LLama: "
-# last activity
-last_submission_activity = -1
 # conversations
 conversations = []
 
@@ -237,7 +228,6 @@ def index():
             print("WIKIPEDIA!!")
         else:
             llama_output = get_llama_output(user_input, user_name, is_markdown=True)
-            #full_output_text = you_colon + user_input + llama_colon + llama_output
             conv_object = Conversation(user_input,llama_output)
             conversations.append(conv_object)
             date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
