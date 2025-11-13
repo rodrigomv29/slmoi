@@ -8,3 +8,4 @@ boto3
 botocore
 requests
 wikipedia-api
+psycopg2-binary
