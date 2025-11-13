@@ -7,3 +7,4 @@ Markdown
 boto3
 botocore
 requests
+wikipedia-api
