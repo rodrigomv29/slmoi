@@ -13,6 +13,9 @@ from botocore.exceptions import NoCredentialsError
 import function_calling
 import news_generator
 import socket
+import wikipediaapi
+import psycopg2
+
 # Initializing Flask App
 app = Flask(__name__)
 # Configuring OpenAI app using environment variables
@@ -351,5 +354,4 @@ def admin():
         return render_template("admin.html", message=message, admin_valid=admin_valid)
 if __name__ == '__main__':
     # Entry point for running the Flask app
-    init_db()
     app.run(debug=False)
