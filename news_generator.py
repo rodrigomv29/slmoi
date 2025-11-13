@@ -8,14 +8,6 @@ from botocore.exceptions import NoCredentialsError
 import socket
 
 
-# NEWSAPI CLASS
-
-# NEWSAPI FACTORY
-
-
-# 
-
-
 load_dotenv()
 api_key = os.getenv("NEWS_API")
 url = f"https://newsapi.org/v2/top-headlines?country=us&apiKey={api_key}"
