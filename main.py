@@ -15,6 +15,7 @@ import news_generator
 import socket
 import wikipediaapi
 import psycopg2
+import time
 
 # Initializing Flask App
 app = Flask(__name__)
@@ -257,6 +258,8 @@ def register():
     DATABASE_URL = os.getenv("DATABASE_URL")
     try:
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        time.sleep(9)
+        return render_template("signin.html")
     except:
         return render_template("index.html")
 
