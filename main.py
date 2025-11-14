@@ -254,15 +254,6 @@ def index():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """Route for user registration. Handles registration form submission."""
-    load_dotenv()
-    DATABASE_URL = os.getenv("DATABASE_URL")
-    try:
-        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-        time.sleep(9)
-        return render_template("signin.html")
-    except:
-        return render_template("index.html")
-
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     if request.method == "POST":
         pw = request.form.get("pass-word")
