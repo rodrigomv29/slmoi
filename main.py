@@ -258,7 +258,7 @@ def register():
     try:
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     except:
-        return render_template("error.html")
+        return render_template("index.html")
 
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     if request.method == "POST":
