@@ -60,6 +60,7 @@ def get_chat_completions_info(client):
     return 0
 
 ## don't forget to change the dot env file please!
+## when done testing change the variables!
 def get_llama_output(inp, user_name, fun_call=1, conversation_history=None, is_markdown=False):
     """Get output from the Llama model, optionally using conversation history and function calling."""
     # TODO: ADD MECHANISM TO LOAD CONVERSATION HISTORY FROM SPECIFIC USER 
