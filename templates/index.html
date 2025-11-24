@@ -151,7 +151,7 @@
             <div class="response">
             {% for conversation in conversations %}
                     <p>You: {{conversation.user_input}}</p>
-                    <p>Llama: {{conversation.output | safe}}</p>
+                    <p>GPT-4: {{conversation.output | safe}}</p>
             {% endfor %}
             </div>
         {% endif %}
