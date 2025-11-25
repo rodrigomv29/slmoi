@@ -26,6 +26,10 @@ def initialize_boto_client():
 
 
 class News:
+    def __init__(self, source, title, url):
+        self.source=source
+        self.title=title
+        self.url=url
     def get_news(self):
         raise NotImplementedError("Subclasses must implement get_news method.")
 
@@ -63,9 +67,10 @@ class APINews(News):
             news_source = news['articles'][i]['source']
             news_title = news['articles'][i]['title']
             news_url = news['articles'][i]['url']
+            news_obj = News(news_source, news_title, news_url) 
         except IndexError:
             return ""
-        return f"{news_title}\n{news_source}\n{news_url}\n"
+        return f"{news_obj.title}\n{news_obj.source}\n{news_obj.url}\n"
 
 class LocalNews(News):
     def get_news(self):
