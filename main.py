@@ -94,7 +94,9 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None, is_m
         if not socket.gethostname() == os.getenv("HOSTNAME"):
             aws_client = news_generator.initialize_boto_client()
             file_key = news_generator.get_most_recent_news(aws_client)
-            return news_generator.show_contents_of_file(aws_client, file_key)
+            sol = news_generator.show_contents_of_file(aws_client, file_key)
+            solution = parse_news_obj(sol)
+            return solution
 
         news_api_key = os.getenv("NEWS_API")
         outp = function_calling.news_function_call(news_api_key)
@@ -112,6 +114,8 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None, is_m
     elif fun_call==4:
         # refer to function_calling.py
         pass
+def parse_news_obj(news):
+    return news
 def insert_conversation_history(base, inp, d, uname, output):
     """Insert a conversation record into the conversations database."""
     db_path = os.path.join(base, "conversations.db")
