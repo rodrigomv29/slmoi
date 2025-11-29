@@ -30,6 +30,18 @@ class News:
         self.source=source
         self.title=title
         self.url=url
+    def get_source(self):
+        return self.source
+    def get_title(self):
+        return self.title
+    def get_url(self):
+        return self.url
+    def set_source(self, s):
+        self.source=s
+    def set_title(self, t):
+        self.title = t
+    def set_url(self, u):
+        self.url = u
     def get_news(self):
         raise NotImplementedError("Subclasses must implement get_news method.")
 
@@ -143,5 +155,7 @@ if __name__ == "__main__":
         if temp == "":
             continue
         news_output += api_news.get_news_readable(news, i)
+    print("START OF FILE:")
     print(news_output)
+    print("END OF FILE")
     save_news_to_s3(news_output, f"news_headlines_{current_time.strftime('%Y%m%d_%H%M%S')}.txt")
