@@ -95,8 +95,8 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None, is_m
             aws_client = news_generator.initialize_boto_client()
             file_key = news_generator.get_most_recent_news(aws_client)
             sol = news_generator.show_contents_of_file(aws_client, file_key)
-            solution = parse_news_obj(sol)
-            return solution
+            #solution = parse_news_obj(sol)
+            return sol
 
         news_api_key = os.getenv("NEWS_API")
         outp = function_calling.news_function_call(news_api_key)
@@ -115,6 +115,74 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None, is_m
         # refer to function_calling.py
         pass
 def parse_news_obj(news):
+    inside_brackets=False
+    inside_url=False
+    inside_title=False
+    inside_news_attr=False
+    news_source_attr=""
+    PROTOCOL_STR = "http"
+    news_attr=""
+    news_url_attr=""
+    news_title_attr=""
+    news_article = news_generator.News("NO_SOURCE", "NO_TITLE", "NO_URL")
+
+    article_list = []
+
+    # if string doesn't look like protocol string then it is news_title
+    for i in news:
+        if i=="{":
+            inside_brackets=True
+            news_source_attr=i
+            continue
+        if i == "}":
+            news_source_attr+=i
+            continue
+        if inside_brackets:
+            news_source_attr+=i
+            continue
+        if i=="\n":
+            news_article.set_source(news_source_attr)
+            inside_brackets=False
+            news_source_attr=""
+            continue
+        else:
+            if inside_news_attr:
+                if len(news_attr)==4 and news_attr==PROTOCOL_STR:
+                    news_url_attr = news_attr
+                    news_attr=""
+                    news_url_attr+=i
+                    inside_url=True
+                    continue
+                if inside_url:
+                    if i=="\n":
+                        news_article.set_url(news_url_attr)
+                        inside_url=False
+                        news_url_attr=""
+                        news_article = news_generator.News("NO_SOURCE", "NO_TITLE", "NO_URL")
+                        continue
+                    news_url_attr+=i
+                    continue
+                if len(news_attr)>4 and not inside_url:
+                    inside_title=True
+                    news_attr=""
+                    news_title_attr=news_attr
+                    news_title_attr+=i
+                    continue
+                if inside_title:
+                    if i=="\n":
+                        news_article.set_title(news_title_attr)
+                        inside_title=False
+                        news_title_attr=""
+                        continue
+                    news_title_attr+=i
+                    continue
+                else:
+                    inside_news_attr+=i
+                    continue
+            else:
+                news_attr=i
+                inside_news_attr=True
+
     return news
 def insert_conversation_history(base, inp, d, uname, output):
     """Insert a conversation record into the conversations database."""
@@ -224,6 +292,7 @@ def index():
         if request.form.get("function_calling")=="Weather":
             print("WEATHER!!")
         if request.form.get("function_calling") == "News":
+            news_function_call=True
             llama_output = get_llama_output(user_input, user_name, fun_call=2,is_markdown=True)
             conv_object = Conversation(user_input,llama_output)
             conversations.append(conv_object)
