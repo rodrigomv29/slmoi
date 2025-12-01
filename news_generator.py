@@ -30,6 +30,8 @@ class News:
         self.source=source
         self.title=title
         self.url=url
+    def __str__(self):
+        return f"{self.title}\n{self.source}\n{self.url}\n"
     def get_source(self):
         return self.source
     def get_title(self):
