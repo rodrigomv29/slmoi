@@ -95,8 +95,9 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None, is_m
             aws_client = news_generator.initialize_boto_client()
             file_key = news_generator.get_most_recent_news(aws_client)
             sol = news_generator.show_contents_of_file(aws_client, file_key)
-            #solution = parse_news_obj(sol)
-            return sol
+            #print(sol)
+            output_list = parse_news_obj(sol)
+            return output_list
 
         news_api_key = os.getenv("NEWS_API")
         outp = function_calling.news_function_call(news_api_key)
@@ -125,9 +126,7 @@ def parse_news_obj(news):
     news_url_attr=""
     news_title_attr=""
     news_article = news_generator.News("NO_SOURCE", "NO_TITLE", "NO_URL")
-
     article_list = []
-
     # if string doesn't look like protocol string then it is news_title
     for i in news:
         if i=="{":
@@ -137,10 +136,10 @@ def parse_news_obj(news):
         if i == "}":
             news_source_attr+=i
             continue
-        if inside_brackets:
+        if inside_brackets and i!="\n":
             news_source_attr+=i
             continue
-        if i=="\n":
+        if i=="\n" and inside_brackets:
             news_article.set_source(news_source_attr)
             inside_brackets=False
             news_source_attr=""
@@ -158,14 +157,16 @@ def parse_news_obj(news):
                         news_article.set_url(news_url_attr)
                         inside_url=False
                         news_url_attr=""
+                        print(news_article)
+                        article_list.append(news_article)
                         news_article = news_generator.News("NO_SOURCE", "NO_TITLE", "NO_URL")
                         continue
                     news_url_attr+=i
                     continue
                 if len(news_attr)>4 and not inside_url:
                     inside_title=True
-                    news_attr=""
                     news_title_attr=news_attr
+                    news_attr=""
                     news_title_attr+=i
                     continue
                 if inside_title:
@@ -177,13 +178,13 @@ def parse_news_obj(news):
                     news_title_attr+=i
                     continue
                 else:
-                    inside_news_attr+=i
+                    news_attr+=i
                     continue
             else:
                 news_attr=i
                 inside_news_attr=True
 
-    return news
+    return article_list
 def insert_conversation_history(base, inp, d, uname, output):
     """Insert a conversation record into the conversations database."""
     db_path = os.path.join(base, "conversations.db")
