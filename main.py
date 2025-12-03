@@ -294,8 +294,8 @@ def index():
             print("WEATHER!!")
         if request.form.get("function_calling") == "News":
             news_function_call=True
-            llama_output = get_llama_output(user_input, user_name, fun_call=2,is_markdown=True)
-            conv_object = Conversation(user_input,llama_output)
+            news_list = get_llama_output(user_input, user_name, fun_call=2,is_markdown=True)
+            conv_object = Conversation(user_input, news_list, is_news=True)
             conversations.append(conv_object)
             date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -304,7 +304,7 @@ def index():
             except:
                 init_db()
                 insert_prompt_input(BASE_DIR, user_input, date, user_name)
-            return render_template('index.html', user_input=user_input, conversations=conversations, openai_version=openai_version)
+            return render_template('index.html', user_input=user_input, conversations=conversations, openai_version=openai_version, news_function_call=news_function_call, )
         if request.form.get("function_calling") == "Wikipedia":
             print("WIKIPEDIA!!")
         else:

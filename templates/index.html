@@ -151,7 +151,16 @@
             <div class="response">
             {% for conversation in conversations %}
                     <p>You: {{conversation.user_input}}</p>
+                    {% if conversation.is_news %}
+                        <p>GPT-4:
+                        {% for news_obj in conversation.output %}
+                            {{news_obj}}
+                        </p>
+                        {% endfor %}
+
+                    {% else %}
                     <p>GPT-4: {{conversation.output | safe}}</p>
+                    {% endif %}
             {% endfor %}
             </div>
         {% endif %}
