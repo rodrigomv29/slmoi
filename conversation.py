@@ -4,6 +4,7 @@ class Conversation:
         self.user_input = user_input
         self.output = output
         self.is_news=is_news
+        self.user_name=user_name
     def get_user_name(self):
         return self.user_name
     def get_user_input(self):
