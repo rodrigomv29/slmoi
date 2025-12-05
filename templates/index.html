@@ -166,6 +166,10 @@
         {% endif %}
 
     </div>
+    <form action='{{ url_for("clear_chat") }}' method="post">
+        <button>Clear chat</button>
+
+    </form>
     <div style="text-align:center; color:#fff; margin-top:20px;">
         <small>OpenAI Python package version: {{ openai_version }}</small>
     </div>

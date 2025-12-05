@@ -3,6 +3,7 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import os
 from news_generator import APINews
+import news_generator
 import json
 
 tools = [
@@ -38,7 +39,10 @@ tools = [
         }
 ]
 load_dotenv()
-api_key = os.getenv("OPENAI_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+NEWS_API_KEY = os.getenv("NEWS_API")
+def wikipedia_function_call():
+    return ""
 
 def news_function_call(key):
     input_list = [
@@ -46,7 +50,7 @@ def news_function_call(key):
     ]
     # 2. Prompt the model with tools defined
     client = OpenAI(
-        api_key = api_key,
+        api_key = OPENAI_API_KEY,
     )
     response = client.responses.create(
         model="gpt-4.1",
@@ -76,5 +80,5 @@ def news_function_call(key):
     )
     return response.output_text
 if __name__ == "__main__":
-
-    print(news_function_call(api_key))
+    aws_client = news_generator.initialize_boto_client()
+    print(news_function_call(NEWS_API_KEY))

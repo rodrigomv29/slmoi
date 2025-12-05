@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, session
+from flask import Flask, request, render_template, session, redirect, url_for
 from dotenv import load_dotenv
 import os
 import sqlite3
@@ -328,6 +328,11 @@ def index():
             rows = select_prompts(BASE_DIR)
         return render_template('index.html', rows=rows, openai_version=openai_version)
 
+@app.route("/clear_chat", methods=["POST"])
+def clear_chat():
+    global conversations
+    conversations.clear()
+    return redirect(url_for("index"))
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """Route for user registration. Handles registration form submission."""

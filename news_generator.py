@@ -9,8 +9,7 @@ import socket
 
 
 load_dotenv()
-api_key = os.getenv("NEWS_API")
-url = f"https://newsapi.org/v2/top-headlines?country=us&apiKey={api_key}"
+NEWS_API_KEY = os.getenv("NEWS_API")
 def initialize_boto_client():
     load_dotenv()
     aws_access_key_id = os.getenv("BUCKETEER_AWS_ACCESS_KEY_ID")
@@ -72,9 +71,10 @@ class APINews(News):
             for i in range(len(data['articles'])):
                 result.append(data['articles'][i]['title'])
         except KeyError:
-            f = get_most_recent_news()
-            backup = show_contents_of_file(f)
-            return data
+            aws_client = initialize_boto_client()
+            f = get_most_recent_news(aws_client)
+            backup = show_contents_of_file(aws_client, f)
+            return backup
         return "\n\n**START OF LIST**\n\n" + str(result) + "\n\n**END OF LIST**\n\n"
     def get_news_readable(self, news, i):
         try:
@@ -149,7 +149,7 @@ if __name__ == "__main__":
 
     current_time = datetime.datetime.now()
     print(current_time)
-    api_news = APINews(api_key)
+    api_news = APINews(NEWS_API_KEY)
     news = api_news.get_news()
     news_output = ""
     for i in range(news['totalResults']):
