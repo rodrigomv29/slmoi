@@ -1,12 +1,12 @@
-
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
 from news_generator import APINews
 import news_generator
 import json
+import wikipediaapi
 
-tools = [
+NEWS_TOOLS = [
         {
             "type": "function",
             "name": "get_news_headlines",
@@ -38,12 +38,33 @@ tools = [
 
         }
 ]
+
+WIKI_TOOLS = [
+        {
+            "type": "function",
+            "name": "get_wikipedia_page",
+            "description": "Get current new data given a news topic",
+            "parameters":{
+                "type": "object",
+                "properties": {
+                    "topic": {
+                        "type":"string",
+                        "description": "Subject for wikipedia page to be returned."
+
+                    }
+                },
+                
+                "required": ["topic"],
+                "additionalProperties": False
+            },
+            "strict": True
+            
+
+        }
+]
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 NEWS_API_KEY = os.getenv("NEWS_API")
-def wikipedia_function_call():
-    return ""
-
 def news_function_call(key):
     input_list = [
     {"role": "user", "content": "What are the general news today?"}
@@ -54,10 +75,9 @@ def news_function_call(key):
     )
     response = client.responses.create(
         model="gpt-4.1",
-        tools=tools,
+        tools=NEWS_TOOLS,
         input=input_list,
     )
-
     news = APINews(key)
     input_list+=response.output
     for item in response.output:
@@ -75,10 +95,48 @@ def news_function_call(key):
     response = client.responses.create(
         model="gpt-5",
         instructions="Answer prompt to summarize the output received by tool. Separate every headline into its own paragaph.If error is seen please display error message shown by the API",
-        tools=tools,
+        tools=NEWS_TOOLS,
+        input=input_list,
+    )
+    return response.output_text
+def get_wikipedia_page(topic):
+    USER_AGENT = os.getenv("USER_AGENT")
+    wiki_wiki = wikipediaapi.Wikipedia(user_agent=USER_AGENT, language='en')
+    page_py = wiki_wiki.page(topic)
+    return page_py.text
+def wikipedia_function_call(prompt):
+    input_list = [
+    {"role": "user", "content": prompt}
+    ]
+    # 2. Prompt the model with tools defined
+    client = OpenAI(
+        api_key = OPENAI_API_KEY,
+    )
+    response = client.responses.create(
+        model="gpt-4.1",
+        tools=WIKI_TOOLS,
+        input=input_list,
+    )
+    input_list+=response.output
+    for item in response.output:
+        if item.type == "function_call":
+            if item.name == "get_wikipedia_page":
+                argument_dict = json.loads(item.arguments)
+                wiki_page = get_wikipedia_page(argument_dict['topic'])
+                input_list.append({
+                    "type": "function_call_output",
+                    "call_id": item.call_id,
+                    "output": json.dumps({
+                        "page": wiki_page
+                    })
+                })
+    response = client.responses.create(
+        model="gpt-5",
+        instructions="Answer prompt and summarize the output received by tool. If error is seen please display error message shown by the wikipedia api",
+        tools=WIKI_TOOLS,
         input=input_list,
     )
     return response.output_text
 if __name__ == "__main__":
-    aws_client = news_generator.initialize_boto_client()
-    print(news_function_call(NEWS_API_KEY))
+    #print(wikipedia_function_call("Tom Hanks"))
+    print(wikipedia_function_call("Linear Algebra"))
