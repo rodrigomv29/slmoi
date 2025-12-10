@@ -2,6 +2,7 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import os
 from news_generator import APINews
+import requests
 import news_generator
 import json
 import wikipediaapi
@@ -147,7 +148,7 @@ def wikipedia_function_call(prompt):
         input=input_list,
     )
     input_list+=response.output
-    print(response.output)
+    #print(response.output)
     for item in response.output:
         if item.type == "function_call":
             if item.name == "get_wikipedia_page":
@@ -169,11 +170,14 @@ def wikipedia_function_call(prompt):
         input=input_list,
     )
     return response.output_text
-def get_weather_data():
-    return "weather data"
+def get_weather_data(lat, lon):
+    res = requests.get(f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={OPENWEATHER_API_KEY}&units=imperial")
+    return res.json()
 
 def weather_function_call():
     return "weather function call"
 if __name__ == "__main__":
-    print(wikipedia_function_call("Who is Carl Friedrich Gauss?"))
+    #print(wikipedia_function_call("Who is Carl Friedrich Gauss?"))
     #print(wikipedia_function_call("Linear Algebra"))
+
+    print(get_weather_data(40.758896, -73.985130))
