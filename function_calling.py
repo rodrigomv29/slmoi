@@ -95,9 +95,9 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 NEWS_API_KEY = os.getenv("NEWS_API")
 OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
-def news_function_call(key):
+def news_function_call(user_prompt):
     input_list = [
-    {"role": "user", "content": "What are the general news today?"}
+    {"role": "user", "content":user_prompt}
     ]
     # 2. Prompt the model with tools defined
     client = OpenAI(
@@ -108,7 +108,7 @@ def news_function_call(key):
         tools=NEWS_TOOLS,
         input=input_list,
     )
-    news = APINews(key)
+    news = APINews(NEWS_API_KEY)
     input_list+=response.output
     for item in response.output:
         if item.type == "function_call":
@@ -124,7 +124,7 @@ def news_function_call(key):
                 })
     response = client.responses.create(
         model="gpt-5",
-        instructions="Answer prompt to summarize the output received by tool. Separate every headline into its own paragaph.If error is seen please display error message shown by the API",
+        instructions="Answer prompt to summarize the output received by tool. Separate every headline into its own paragaph.If error is seen please display error message shown by the API. If prompt does not ask for news related task then print an error message for that.",
         tools=NEWS_TOOLS,
         input=input_list,
     )
@@ -162,7 +162,7 @@ def wikipedia_function_call(prompt):
                     })
                 })
         else:
-            print("LLM is responding without wikipedia")
+            return "LLM is responding without wikipedia"
     response = client.responses.create(
         model="gpt-5",
         instructions="Answer prompt using wikipedia tool. If error is seen please display error message shown by the wikipedia api",
@@ -179,5 +179,5 @@ def weather_function_call():
 if __name__ == "__main__":
     #print(wikipedia_function_call("Who is Carl Friedrich Gauss?"))
     #print(wikipedia_function_call("Linear Algebra"))
-
-    print(get_weather_data(40.758896, -73.985130))
+    print(news_function_call("Can you pass the salt?"))
+    #print(get_weather_data(40.758896, -73.985130))
