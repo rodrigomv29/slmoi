@@ -110,7 +110,13 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None, is_m
     # WEATHER
     elif fun_call==3:
         # refer to function_calling.py
-        pass
+        outp = function_calling.wikipedia_function_call(inp)
+        if is_markdown:
+            outp = Markup(markdown.markdown(outp))
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
+        insert_conversation_history(BASE_DIR, inp, date, user_name, outp)
+        return outp
     # WIKIPEDIA
     elif fun_call==4:
         # refer to function_calling.py
@@ -306,7 +312,19 @@ def index():
                 insert_prompt_input(BASE_DIR, user_input, date, user_name)
             return render_template('index.html', user_input=user_input, conversations=conversations, openai_version=openai_version, news_function_call=news_function_call, )
         if request.form.get("function_calling") == "Wikipedia":
-            print("WIKIPEDIA!!")
+            news_function_call=False
+            wiki_function_call=True
+            wiki_text = get_llama_output(user_input, user_name, fun_call=3, is_markdown=False)
+            conv_object=Conversation(user_input, wiki_text)
+            conversations.append(conv_object)
+            date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+            try:
+                insert_prompt_input(BASE_DIR, user_input, date, user_name)
+            except:
+                init_db()
+                insert_prompt_input(BASE_DIR, user_input, date, user_name)
+            return render_template('index.html', user_input=user_input, conversations=conversations, openai_version=openai_version, news_function_call=news_function_call)
         else:
             llama_output = get_llama_output(user_input, user_name, is_markdown=True)
             conv_object = Conversation(user_input,llama_output)
