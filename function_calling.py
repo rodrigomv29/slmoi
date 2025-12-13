@@ -2,6 +2,7 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import os
 from news_generator import APINews
+import requests
 import news_generator
 import json
 import wikipediaapi
@@ -62,12 +63,41 @@ WIKI_TOOLS = [
 
         }
 ]
+WEATHER_TOOLS = [
+        {
+            "type": "function",
+            "name": "get_weather_data",
+            "description": "Get current weather data given longitude and latitude coordinates",
+            "parameters":{
+                "type": "object",
+                "properties": {
+                    "latitude": {
+                        "type":"string",
+                        "description": "Latitude coordinates of location"
+
+                    },
+                    "longitude":{
+                        "type": "string",
+                        "description":"Longitude coordinates of location"
+                    }
+
+                },
+                
+                "required": ["latitude", "latitude"],
+                "additionalProperties": False
+            },
+            "strict": True
+            
+
+        }
+]
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 NEWS_API_KEY = os.getenv("NEWS_API")
-def news_function_call(key):
+OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
+def news_function_call(user_prompt):
     input_list = [
-    {"role": "user", "content": "What are the general news today?"}
+    {"role": "user", "content":user_prompt}
     ]
     # 2. Prompt the model with tools defined
     client = OpenAI(
@@ -78,7 +108,7 @@ def news_function_call(key):
         tools=NEWS_TOOLS,
         input=input_list,
     )
-    news = APINews(key)
+    news = APINews(NEWS_API_KEY)
     input_list+=response.output
     for item in response.output:
         if item.type == "function_call":
@@ -94,7 +124,7 @@ def news_function_call(key):
                 })
     response = client.responses.create(
         model="gpt-5",
-        instructions="Answer prompt to summarize the output received by tool. Separate every headline into its own paragaph.If error is seen please display error message shown by the API",
+        instructions="Answer prompt to summarize the output received by tool. Separate every headline into its own paragaph.If error is seen please display error message shown by the API. If prompt does not ask for news related task then print an error message for that.",
         tools=NEWS_TOOLS,
         input=input_list,
     )
@@ -118,6 +148,7 @@ def wikipedia_function_call(prompt):
         input=input_list,
     )
     input_list+=response.output
+    #print(response.output)
     for item in response.output:
         if item.type == "function_call":
             if item.name == "get_wikipedia_page":
@@ -130,13 +161,23 @@ def wikipedia_function_call(prompt):
                         "page": wiki_page
                     })
                 })
+        else:
+            return "LLM is responding without wikipedia"
     response = client.responses.create(
         model="gpt-5",
-        instructions="Answer prompt and summarize the output received by tool. If error is seen please display error message shown by the wikipedia api",
+        instructions="Answer prompt using wikipedia tool. If error is seen please display error message shown by the wikipedia api",
         tools=WIKI_TOOLS,
         input=input_list,
     )
     return response.output_text
+def get_weather_data(lat, lon):
+    res = requests.get(f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={OPENWEATHER_API_KEY}&units=imperial")
+    return res.json()
+
+def weather_function_call():
+    return "weather function call"
 if __name__ == "__main__":
-    #print(wikipedia_function_call("Tom Hanks"))
-    print(wikipedia_function_call("Linear Algebra"))
+    #print(wikipedia_function_call("Who is Carl Friedrich Gauss?"))
+    #print(wikipedia_function_call("Linear Algebra"))
+    print(news_function_call("Can you pass the salt?"))
+    #print(get_weather_data(40.758896, -73.985130))
