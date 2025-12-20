@@ -9,3 +9,4 @@ botocore
 requests
 wikipedia-api
 psycopg2-binary
+flask-wtf
