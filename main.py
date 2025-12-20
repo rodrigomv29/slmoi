@@ -79,7 +79,6 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None, is_m
             # Extract output from completion object
             outp = completion.output[0].content[0].text
         except Exception as e:
-            print("An error occurred:", e)
             outp = None  # or some fallback value
         if is_markdown:
             outp = Markup(markdown.markdown(outp))
@@ -95,7 +94,6 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None, is_m
             aws_client = news_generator.initialize_boto_client()
             file_key = news_generator.get_most_recent_news(aws_client)
             sol = news_generator.show_contents_of_file(aws_client, file_key)
-            #print(sol)
             output_list = parse_news_obj(sol)
             return output_list
 
@@ -163,7 +161,6 @@ def parse_news_obj(news):
                         news_article.set_url(news_url_attr)
                         inside_url=False
                         news_url_attr=""
-                        print(news_article)
                         article_list.append(news_article)
                         news_article = news_generator.News("NO_SOURCE", "NO_TITLE", "NO_URL")
                         continue
@@ -267,9 +264,9 @@ def insert_signin_data(base, un, pw):
     try:
         s3.put_object(Bucket=bucket_name, Key=object_key, Body=login_data)
     except NoCredentialsError:
-        print("AWS credentials not found. Login data not saved to S3.")
+        return "AWS credentials not found. Login data not saved to S3."
     except Exception as e:
-        print(f"Error saving login data to S3: {e}")
+        return f"Error saving login data to S3: {e}"
 
 def select_prompts(base, query="prompts"):
     """Select prompts or sign-in data from the appropriate database table."""
@@ -297,7 +294,7 @@ def index():
         user_input = request.form.get("user_input")
         user_name = request.form.get('user_name')
         if request.form.get("function_calling")=="Weather":
-            print("WEATHER!!")
+            pass
         if request.form.get("function_calling") == "News":
             news_function_call=True
             news_list = get_llama_output(user_input, user_name, fun_call=2,is_markdown=True)
@@ -391,7 +388,6 @@ def register():
         user_id = cur.fetchone()[0]
         conn.commit()
 
-        print("DONE!!")
     return render_template("register.html")
 
 def insert_register_data(base, username, password, birthday):
@@ -460,9 +456,7 @@ def admin():
                 message = "Sign-in successful!"
                 session['admin_valid'] = True
                 session['last_activity'] = datetime.now().timestamp()
-                #print("SUCESSFUL!!!!!!!!")
             else:
-                #print("FAIL!!!")
                 message = "Invalid username or password."
         except Exception as e:
             admin_valid = False
