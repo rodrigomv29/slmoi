@@ -36,6 +36,40 @@
         .sidebar ul li a:hover {
             text-decoration: underline;
         }
+        .welcome-page{
+            height: 100%;
+            width: 100%;
+            text-align: center;
+            background: linear-gradient(135deg, #2f2f2f 0%, #1a1a1a 100%);
+            padding: 50px 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 2s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .welcome-page h1{
+            font-size: 48px;
+            font-weight: bold;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+        }
+        .welcome-page h3{
+            font-size: 28px;
+            color: #cccccc;
+            margin-bottom: 30px;
+        }
+        .welcome-page p{
+            font-size: 20px;
+            line-height: 1.6;
+            color: #e0e0e0;
+            max-width: 800px;
+            margin: 0 auto 20px;
+        }
         .container {
             width: 50%;
             margin: 40px auto;
@@ -116,23 +150,30 @@
             <a href="https://rodrigomv29.github.io/">About Rodrigo</a>
         </div>
     </nav>
+    <div class="welcome-page">
+        <h1>LLM Wrapper App</h1>
+        <h3>A Personal Hobby Project by Rodrigo Morales</h3>
+        <p>Welcome to my personal playground for exploring the fascinating world of Large Language Models (LLMs)! This is a hobby project born from curiosity and a passion for AI, where I experiment with integrating GPT models with various tools to enhance their capabilities.</p>
+        <p>Here, you'll find a simple chat interface powered by OpenAI's API, combined with features like news aggregation and weather integration. It's all about learning, tinkering, and discovering new ways to make LLMs more useful in everyday applications.</p>
+        <p>Feel free to explore, chat with the AI, and see what emerges from this ongoing journey of discovery. Project is licensed under GPL license. Check out the Github repo: <a href="https://github.com/rodrigomv29/slmoi" style="color: #4CAF50;">here!</a></p>
+    </div>
     <div class="sidebar">
-        <h2>Chat Histories</h2>
-        <ul>
-            <li><a href="#">Chat 1</a></li>
-            <li><a href="#">Chat 2</a></li>
-            <li><a href="#">Chat 3</a></li>
-            <li><a href="#">Chat 4</a></li>
-            <li><a href="#">Chat 5</a></li>
-            <li><a href="#">Chat 6</a></li>
-            <li><a href="#">Chat 7</a></li>
-            <li><a href="#">Chat 8</a></li>
-            <li><a href="#">Chat 9</a></li>
-            <li><a href="#">Chat 10</a></li>
-        </ul>
+            <h2>Chat Histories</h2>
+            <ul>
+                <li><a href="#">Chat 1</a></li>
+                <li><a href="#">Chat 2</a></li>
+                <li><a href="#">Chat 3</a></li>
+                <li><a href="#">Chat 4</a></li>
+                <li><a href="#">Chat 5</a></li>
+                <li><a href="#">Chat 6</a></li>
+                <li><a href="#">Chat 7</a></li>
+                <li><a href="#">Chat 8</a></li>
+                <li><a href="#">Chat 9</a></li>
+                <li><a href="#">Chat 10</a></li>
+            </ul>
     </div>
     <div class="container">
-        <h1>LLM Wrapper App</h1>
+        <h1>Hello, what would you like to know?</h1>
         <p>Weather tool is under construction.</p>
         <p>DISCLAIMER: PLEASE DON'T INSERT SENSISTIVE INFORMATION INTO THE PROMPT</p>
         <form method="post">
@@ -148,7 +189,6 @@
             </div>
             <button class="button" type="submit">Send</button>
         </form>
-
         {% if user_input%}
             <div class="response">
             {% for conversation in conversations %}
