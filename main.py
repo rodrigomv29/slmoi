@@ -67,7 +67,6 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None, is_m
         conversation_history = []
     conversation_history.append({"role": "user", "content": inp})
     #General use of an llm without any function calls
-    print("outp")
     if fun_call == 1:
         try:
             completion = client.responses.create(

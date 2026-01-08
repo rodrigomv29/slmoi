@@ -99,7 +99,6 @@ def news_function_call(user_prompt):
     input_list = [
     {"role": "user", "content":user_prompt}
     ]
-    print(input_list)
     # 2. Prompt the model with tools defined
     client = OpenAI(
         api_key = OPENAI_API_KEY,
