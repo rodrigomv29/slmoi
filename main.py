@@ -310,7 +310,6 @@ def index():
             return render_template('index.html', user_input=user_input, conversations=conversations, openai_version=openai_version, news_function_call=news_function_call, )
         if request.form.get("function_calling") == "Wikipedia":
             news_function_call=False
-            wiki_function_call=True
             wiki_text = get_llama_output(user_input, user_name, fun_call=3, is_markdown=True)
             conv_object=Conversation(user_input, wiki_text)
             conversations.append(conv_object)
