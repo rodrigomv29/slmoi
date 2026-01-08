@@ -165,7 +165,7 @@ def wikipedia_function_call(prompt):
             return "LLM is responding without wikipedia"
     response = client.responses.create(
         model="gpt-4.1",
-        instructions="Answer prompt using wikipedia tool. If error is seen please display error message shown by the wikipedia api",
+        instructions="Answer prompt using wikipedia tool. If error is seen please display error message shown by the wikipedia api. If successfully retrieved wikipedia information then cite the page you used to retrieve the information.",
         tools=WIKI_TOOLS,
         input=input_list,
     )
@@ -177,7 +177,7 @@ def get_weather_data(lat, lon):
 def weather_function_call():
     return "weather function call"
 if __name__ == "__main__":
-    print(wikipedia_function_call("What happened to Nicolas Maduro in 2026"))
+    print(wikipedia_function_call("Can you pass me the ketchup?"))
     #print(wikipedia_function_call("Linear Algebra"))
     #print(news_function_call("Can you pass the salt?"))
     #print(get_weather_data(40.758896, -73.985130))
