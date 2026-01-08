@@ -311,7 +311,7 @@ def index():
         if request.form.get("function_calling") == "Wikipedia":
             news_function_call=False
             wiki_function_call=True
-            wiki_text = get_llama_output(user_input, user_name, fun_call=3, is_markdown=False)
+            wiki_text = get_llama_output(user_input, user_name, fun_call=3, is_markdown=True)
             conv_object=Conversation(user_input, wiki_text)
             conversations.append(conv_object)
             date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
