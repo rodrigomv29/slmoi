@@ -5,7 +5,7 @@ class Conversation:
         self.output = output
         self.is_news=is_news
         self.user_name=user_name
-        if type(user_input) == list:
+        if type(self.user_input) == list:
             self.is_list = True
     def get_user_name(self):
         return self.user_name
