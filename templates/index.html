@@ -12,12 +12,16 @@
             font-family: Arial, sans-serif;
         }
         .sidebar {
-            width: 20%;
+            max-width: 10%;
+            font-size: 0.70em;
             float: left;
-            padding: 20px;
+            padding: 2px;
             background-color: #3a3a3a;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        .sidebar h2 {
+            font-size:  18px;
         }
         .sidebar ul {
             list-style-type: none;
@@ -70,7 +74,8 @@
             height: 100%;
         }
         .container {
-            width: 50%;
+            max-width: 75%;
+            min-width: 50%;
             margin: 40px auto;
             padding: 20px;
             background-color: #333333;
@@ -97,6 +102,10 @@
             background-color: #555555;
             color: #ffffff;
             cursor: pointer;
+        }
+        .container h1{
+            font-size: 1.25em;
+            padding: 10px 15px;
         }
         .button:hover {
             background-color: #888;
@@ -163,7 +172,7 @@
     </div>
     <div class="main-page">
             <div class="sidebar">
-                <h2>Chat Histories</h2>
+                <h2>Chats</h2>
                 <ul>
                     <li><a href="#">Chat 1</a></li>
                     <li><a href="#">Chat 2</a></li>
