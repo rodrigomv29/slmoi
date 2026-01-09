@@ -91,6 +91,7 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None, is_m
             file_key = news_generator.get_most_recent_news(aws_client)
             sol = news_generator.show_contents_of_file(aws_client, file_key)
             output_list = parse_news_obj(sol)
+            print(type(output_list))
             return output_list
 
         outp = function_calling.news_function_call(inp)
@@ -100,7 +101,7 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None, is_m
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
         insert_conversation_history(BASE_DIR, inp, date, user_name, outp)
         return outp
-    # WEATHER
+    # LLM function call for reading wikipedia articles
     elif fun_call==3:
         # refer to function_calling.py
         outp = function_calling.wikipedia_function_call(inp)
