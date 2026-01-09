@@ -59,17 +59,15 @@ def get_chat_completions_info(client):
         return client.usage.total_tokens
     return 0
 
-## don't forget to change the dot env file please!
-## when done testing change the variables!
+
 def get_llama_output(inp, user_name, fun_call=1, conversation_history=None, is_markdown=False):
     """Get output from the Llama model, optionally using conversation history and function calling."""
     # TODO: ADD MECHANISM TO LOAD CONVERSATION HISTORY FROM SPECIFIC USER 
     if conversation_history is None:
         conversation_history = []
     conversation_history.append({"role": "user", "content": inp})
-
+    #General use of an llm without any function calls
     if fun_call == 1:
-        # role_system = [ {"role": "system", "content": "You are a helpful assistant that answer questions in a grandiloquent  way"},]
         try:
             completion = client.responses.create(
                 model="gpt-4.1",
@@ -86,10 +84,8 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None, is_m
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
         insert_conversation_history(BASE_DIR, inp, date, user_name, outp)
         return outp
-    
-    # NEWS
+    #LLM function call for fetching news
     elif fun_call==2:
-        # refer to function_calling.py
         if not socket.gethostname() == os.getenv("HOSTNAME"):
             aws_client = news_generator.initialize_boto_client()
             file_key = news_generator.get_most_recent_news(aws_client)
@@ -97,8 +93,7 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None, is_m
             output_list = parse_news_obj(sol)
             return output_list
 
-        news_api_key = os.getenv("NEWS_API")
-        outp = function_calling.news_function_call(news_api_key)
+        outp = function_calling.news_function_call(inp)
         if is_markdown:
             outp = Markup(markdown.markdown(outp))
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))

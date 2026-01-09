@@ -116,6 +116,11 @@
             border-radius: 10px;
 
         }
+        .author-text{
+            font-size: 14px;
+            padding: 1px 2px;
+
+        }
         nav {
             background-color: #232323;
             padding: 12px 0;
@@ -180,11 +185,11 @@
                 <textarea class="text-area" name="user_input" placeholder="Talk to GPT-4"></textarea>
                 <input type="text" name="user_name" value="guest">
                 <div class="radio-buttons">
-                    <input type="radio" id="news" name="function_calling" value="News">
+                    <input type="checkbox" id="news" name="function_calling" value="News">
                     <label for="news">News</label>
-                    <input type="radio" id="weather" name="function_calling" value="Weather">
+                    <input type="checkbox" id="weather" name="function_calling" value="Weather">
                     <label for="weather">Weather</label>
-                    <input type="radio" id="wikipedia" name="function_calling" value="Wikipedia">
+                    <input type="checkbox" id="wikipedia" name="function_calling" value="Wikipedia">
                     <label for="wikipedia">Wikipedia</label>
                 </div>
                 <button class="button" type="submit">Send</button>
@@ -192,16 +197,16 @@
             {% if user_input%}
                 <div class="response">
                 {% for conversation in conversations %}
-                        <p>You: {{conversation.user_input}}</p>
-                        {% if conversation.is_news %}
-                            <p>GPT-4:
+                        <p class="author-text"><b>You:</b> {{conversation.user_input}}</p>
+                        {% if conversation.is_list %}
+                            <p class="author-text"><b>GPT-4:</b></p><p> 
                             {% for news_obj in conversation.output %}
                                 {{news_obj}}
                             </p>
                             {% endfor %}
 
                         {% else %}
-                        <p>GPT-4: {{conversation.output | safe}}</p>
+                        <p class="author-text"><b>GPT-4:</b> {{conversation.output | safe}}</p>
                         {% endif %}
                 {% endfor %}
                 </div>

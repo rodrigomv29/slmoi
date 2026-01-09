@@ -122,6 +122,8 @@ def news_function_call(user_prompt):
                         "headlines": headlines
                     })
                 })
+        else: 
+            return "LLM is not using news tool."
     response = client.responses.create(
         model="gpt-5",
         instructions="Answer prompt to summarize the output received by tool. Separate every headline into its own paragaph.If error is seen please display error message shown by the API. If prompt does not ask for news related task then print an error message for that.",
@@ -134,9 +136,9 @@ def get_wikipedia_page(topic):
     wiki_wiki = wikipediaapi.Wikipedia(user_agent=USER_AGENT, language='en')
     page_py = wiki_wiki.page(topic)
     return page_py.text
-def wikipedia_function_call(prompt):
+def wikipedia_function_call(user_prompt):
     input_list = [
-    {"role": "user", "content": prompt}
+    {"role": "user", "content": user_prompt}
     ]
     # 2. Prompt the model with tools defined
     client = OpenAI(
