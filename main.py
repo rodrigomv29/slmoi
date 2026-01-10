@@ -39,12 +39,14 @@ def init_accounts(name):
     db_url= os.getenv("DATABASE_URL")
     with psycopg.connect(db_url) as conn:
         with conn.cursor() as cur:
-            cur.execute(f"""
-                CREATE TABLE IF NOT EXISTS ${name}_account (
+            # create table for account
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS Accounts (
                 (id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_name TEXT NOT NULL,
                 date_made TEXT NOT NULL,
                 birthdate TEXT DEFAULT 'guest')""")
+            # insert user account data into table
             conn.commit()
 
 # TODO DEFINE A FUNCTION WHERE USER CAN CUSTOMIZE 
