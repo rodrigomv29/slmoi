@@ -13,10 +13,8 @@ from botocore.exceptions import NoCredentialsError
 import function_calling
 import news_generator
 import socket
-import wikipediaapi
 from werkzeug.security import generate_password_hash
-import psycopg2
-import time
+import psycopg
 
 # Initializing Flask App
 app = Flask(__name__)
@@ -34,9 +32,27 @@ llama_output = ""
 # conversations
 conversations = []
 
-def init_db():
+
+def init_db(name):
     """Initialize the prompts database if it does not exist."""
-    pass
+    print('hello')
+    db_url= os.getenv("DATABASE_URL")
+    with psycopg.connect(db_url) as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS ${name} (
+                id serial PRIMARY KEY,
+                num integer,
+                data text)
+            """)
+            cur.execute("""
+                INSERT INTO test(num, data) VALUES (%s, %s)
+                        """, (7, "ishowspeed"))
+            cur.execute("SELECT * FROM test")
+            sol = cur.fetchall()
+            conn.commit()
+    print(sol)
+
 
 # TODO DEFINE A FUNCTION WHERE USER CAN CUSTOMIZE 
 def get_openai_version():
@@ -337,43 +353,6 @@ def clear_chat():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """Route for user registration. Handles registration form submission."""
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    if request.method == "POST":
-        pw = request.form.get("pass-word")
-        pw2 = request.form.get("pass-word-2")
-        un = request.form.get('user-name')
-        bd = request.form.get('birthday')
-        if pw != pw2:
-            # Handle password mismatch error
-            return render_template("register.html", error="Passwords do not match")
-
-        # Hash the password
-        hashed_pw = generate_password_hash(pw)
-       
-        conn = connect_to_db()
-        cur = conn.cursor()
-        # Create users table if it doesn't exist
-        create_table_query = """
-            CREATE TABLE IF NOT EXISTS users (
-                id SERIAL PRIMARY KEY,
-                username VARCHAR(50) UNIQUE NOT NULL,
-                password VARCHAR(255) NOT NULL,
-                birthday DATE,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
-        """
-        cur.execute(create_table_query)
-        conn.commit()
-
-        insert_query = """
-                INSERT INTO users (username, password, birthday)
-                VALUES (%s, %s, %s)
-                RETURNING id;
-            """
-        cur.execute(insert_query, (un, hashed_pw, bd))
-        user_id = cur.fetchone()[0]
-        conn.commit()
-
     return render_template("register.html")
 
 def insert_register_data(base, username, password, birthday):
@@ -462,11 +441,8 @@ def admin():
                 session['last_activity'] = now
                 admin_valid = session.get('admin_valid', False)
         return render_template("admin.html", message=message, admin_valid=admin_valid)
-def connect_to_db():
-    load_dotenv()
-    DATABASE_URL = os.getenv("DATABASE_URL")
-    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-    return conn
+
 if __name__ == '__main__':
     # Entry point for running the Flask app
     app.run(debug=False)
+    init_db("rodrigo")
