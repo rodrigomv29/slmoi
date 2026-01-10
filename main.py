@@ -36,16 +36,7 @@ conversations = []
 
 def init_db():
     """Initialize the prompts database if it does not exist."""
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    db_path = os.path.join(BASE_DIR, "prompts.db")
-    with sqlite3.connect(db_path) as conn:
-        c = conn.cursor()
-        c.execute('''CREATE TABLE IF NOT EXISTS user_inputs
-                    (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    input_text TEXT NOT NULL,
-                    date TEXT NOT NULL,
-                    user_name TEXT DEFAULT 'guest')''')
-        conn.commit()
+    pass
 
 # TODO DEFINE A FUNCTION WHERE USER CAN CUSTOMIZE 
 def get_openai_version():
