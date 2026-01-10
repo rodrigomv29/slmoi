@@ -33,26 +33,19 @@ llama_output = ""
 conversations = []
 
 
-def init_db(name):
+def init_accounts(name):
     """Initialize the prompts database if it does not exist."""
     print('hello')
     db_url= os.getenv("DATABASE_URL")
     with psycopg.connect(db_url) as conn:
         with conn.cursor() as cur:
-            cur.execute("""
-                CREATE TABLE IF NOT EXISTS ${name} (
-                id serial PRIMARY KEY,
-                num integer,
-                data text)
-            """)
-            cur.execute("""
-                INSERT INTO test(num, data) VALUES (%s, %s)
-                        """, (7, "ishowspeed"))
-            cur.execute("SELECT * FROM test")
-            sol = cur.fetchall()
+            cur.execute(f"""
+                CREATE TABLE IF NOT EXISTS ${name}_account (
+                (id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_name TEXT NOT NULL,
+                date_made TEXT NOT NULL,
+                birthdate TEXT DEFAULT 'guest')""")
             conn.commit()
-    print(sol)
-
 
 # TODO DEFINE A FUNCTION WHERE USER CAN CUSTOMIZE 
 def get_openai_version():
@@ -308,7 +301,6 @@ def index():
             try:
                 insert_prompt_input(BASE_DIR, user_input, date, user_name)
             except:
-                init_db()
                 insert_prompt_input(BASE_DIR, user_input, date, user_name)
             return render_template('index.html', user_input=user_input, conversations=conversations, openai_version=openai_version, news_function_call=news_function_call, )
         if request.form.get("function_calling") == "Wikipedia":
@@ -321,7 +313,6 @@ def index():
             try:
                 insert_prompt_input(BASE_DIR, user_input, date, user_name)
             except:
-                init_db()
                 insert_prompt_input(BASE_DIR, user_input, date, user_name)
             return render_template('index.html', user_input=user_input, conversations=conversations, openai_version=openai_version, news_function_call=news_function_call)
         else:
@@ -333,7 +324,6 @@ def index():
             try:
                 insert_prompt_input(BASE_DIR, user_input, date, user_name)
             except:
-                init_db()
                 insert_prompt_input(BASE_DIR, user_input, date, user_name)
             return render_template('index.html', user_input=user_input, conversations=conversations, openai_version=openai_version)
     else:
@@ -341,7 +331,6 @@ def index():
         try:
             rows = select_prompts(BASE_DIR, "signin")
         except sqlite3.OperationalError:
-            init_db()
             rows = select_prompts(BASE_DIR)
         return render_template('index.html', rows=rows, openai_version=openai_version)
 
@@ -405,7 +394,6 @@ def sign_in():
 def admin():
     """Route for admin sign-in. Handles admin signin form submission and session management."""
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    init_db()
     prompt_table = select_prompts(BASE_DIR)
     message = None
     admin_valid = False
@@ -445,4 +433,4 @@ def admin():
 if __name__ == '__main__':
     # Entry point for running the Flask app
     app.run(debug=False)
-    init_db("rodrigo")
+    #init_db("rodrigo")
