@@ -32,22 +32,38 @@ llama_output = ""
 # conversations
 conversations = []
 
+create_table="""
+                CREATE TABLE IF NOT EXISTS Accounts (
+                id SERIAL PRIMARY KEY,
+                full_name TEXT NOT NULL,
+                user_name TEXT NOT NULL UNIQUE,
+                time_made TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                birthdate DATE)"""
 
-def init_accounts(name):
+@app.route("/init_db", methods=["GET", "POST"])
+def init_db():
     """Initialize the prompts database if it does not exist."""
-    print('hello')
+
+    """
     db_url= os.getenv("DATABASE_URL")
     with psycopg.connect(db_url) as conn:
         with conn.cursor() as cur:
             # create table for account
-            cur.execute("""
-                CREATE TABLE IF NOT EXISTS Accounts (
-                (id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_name TEXT NOT NULL,
-                date_made TEXT NOT NULL,
-                birthdate TEXT DEFAULT 'guest')""")
+            cur.execute()
+            tups = ( ('Cristiano Ronaldo', 'cristiano', '1985-02-05'),
+                        ('Lionel Messi', 'leomessi', '1987-06-24'),
+                        ('Kylian Mbappe', 'kmbappe', '1998-12-20'))
+            cur.executemany("INSERT INTO Accounts (full_name, user_name, birthdate) VALUES (%s, %s, %s)",
+                            tups                       
+)
+            cur.execute("SELECT * FROM Accounts")
+            solution = cur.fetchall()
+
             # insert user account data into table
             conn.commit()
+            return str(solution)
+"""
+    return "testing"
 
 # TODO DEFINE A FUNCTION WHERE USER CAN CUSTOMIZE 
 def get_openai_version():
@@ -329,12 +345,7 @@ def index():
                 insert_prompt_input(BASE_DIR, user_input, date, user_name)
             return render_template('index.html', user_input=user_input, conversations=conversations, openai_version=openai_version)
     else:
-        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        try:
-            rows = select_prompts(BASE_DIR, "signin")
-        except sqlite3.OperationalError:
-            rows = select_prompts(BASE_DIR)
-        return render_template('index.html', rows=rows, openai_version=openai_version)
+        return render_template('index.html', openai_version=openai_version)
 
 @app.route("/clear_chat", methods=["POST"])
 def clear_chat():
@@ -344,6 +355,12 @@ def clear_chat():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """Route for user registration. Handles registration form submission."""
+    if request.method=="POST":
+        fullname =request.form.get("full-name")
+        birthday = request.form.get("birthday")
+        password = request.form.get("pass-word")
+        password2 = request.form.get("pass-word-2")
+        print(fullname, birthday, password, password2)
     return render_template("register.html")
 
 def insert_register_data(base, username, password, birthday):
