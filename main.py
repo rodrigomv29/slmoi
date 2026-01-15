@@ -342,7 +342,7 @@ def clear_chat():
 def register():
     """Route for user registration. Handles registration form submission."""
     if request.method=="POST":
-        fullname =request.form.get("full-name")
+        fullname = request.form.get("full-name")
         username = request.form.get("user-name")
         birthday = request.form.get("birthday")
         password = request.form.get("pass-word")

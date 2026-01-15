@@ -9,7 +9,7 @@ class User:
         self.created_at = current_time.strftime('%Y-%m-%d_%H:%M:%S')
         self.interests = interests
     def __str__(self):
-        return f"User {self.user_name} ({self.name}), joined on {self.created_at}, born on {self.birthday}"
+        return f"User: {self.user_name}\n ({self.name}), joined on {self.created_at}, born on {self.birthday}"
     def __repr__(self):
         return f"User(name={self.name}, user_name={self.user_name}, password=***, birthday={self.birthday}, interests={self.interests})"
     def get_username(self):
