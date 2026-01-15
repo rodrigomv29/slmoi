@@ -15,6 +15,7 @@ import news_generator
 import socket
 from werkzeug.security import generate_password_hash
 import psycopg
+from user import User
 
 # Initializing Flask App
 app = Flask(__name__)
@@ -315,11 +316,6 @@ def index():
             conv_object = Conversation(user_input, news_list, is_news=True)
             conversations.append(conv_object)
             date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-            try:
-                insert_prompt_input(BASE_DIR, user_input, date, user_name)
-            except:
-                insert_prompt_input(BASE_DIR, user_input, date, user_name)
             return render_template('index.html', user_input=user_input, conversations=conversations, openai_version=openai_version, news_function_call=news_function_call, )
         if request.form.get("function_calling") == "Wikipedia":
             news_function_call=False
@@ -327,22 +323,12 @@ def index():
             conv_object=Conversation(user_input, wiki_text)
             conversations.append(conv_object)
             date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-            try:
-                insert_prompt_input(BASE_DIR, user_input, date, user_name)
-            except:
-                insert_prompt_input(BASE_DIR, user_input, date, user_name)
             return render_template('index.html', user_input=user_input, conversations=conversations, openai_version=openai_version, news_function_call=news_function_call)
         else:
             llama_output = get_llama_output(user_input, user_name, is_markdown=True)
             conv_object = Conversation(user_input,llama_output)
             conversations.append(conv_object)
             date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-            try:
-                insert_prompt_input(BASE_DIR, user_input, date, user_name)
-            except:
-                insert_prompt_input(BASE_DIR, user_input, date, user_name)
             return render_template('index.html', user_input=user_input, conversations=conversations, openai_version=openai_version)
     else:
         return render_template('index.html', openai_version=openai_version)
@@ -357,10 +343,16 @@ def register():
     """Route for user registration. Handles registration form submission."""
     if request.method=="POST":
         fullname =request.form.get("full-name")
+        username = request.form.get("user-name")
         birthday = request.form.get("birthday")
         password = request.form.get("pass-word")
         password2 = request.form.get("pass-word-2")
-        print(fullname, birthday, password, password2)
+        if password == password2:
+            user = User(fullname, username, birthday, password)
+            print(user)
+        else:
+            print("passwords don't match")
+            return redirect(url_for("register"))    
     return render_template("register.html")
 
 def insert_register_data(base, username, password, birthday):
