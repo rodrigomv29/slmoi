@@ -179,7 +179,7 @@ def get_weather_data(lat, lon):
 def weather_function_call():
     return "weather function call"
 if __name__ == "__main__":
-    print(wikipedia_function_call("Can you pass me the ketchup?"))
+    #print(wikipedia_function_call("Can you pass me the ketchup?"))
     #print(wikipedia_function_call("Linear Algebra"))
     #print(news_function_call("Can you pass the salt?"))
-    #print(get_weather_data(40.758896, -73.985130))
+    print(type(get_weather_data(40.758896, -73.985130))
