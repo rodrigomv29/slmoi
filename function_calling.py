@@ -74,7 +74,6 @@ WEATHER_TOOLS = [
                     "latitude": {
                         "type":"string",
                         "description": "Latitude coordinates of location"
-
                     },
                     "longitude":{
                         "type": "string",
@@ -83,7 +82,7 @@ WEATHER_TOOLS = [
 
                 },
                 
-                "required": ["latitude", "latitude"],
+                "required": ["latitude", "longitude"],
                 "additionalProperties": False
             },
             "strict": True
@@ -176,10 +175,45 @@ def get_weather_data(lat, lon):
     res = requests.get(f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={OPENWEATHER_API_KEY}&units=imperial")
     return res.json()
 
-def weather_function_call():
-    return "weather function call"
+def weather_function_call(user_prompt):
+    input_list = [
+    {"role": "user", "content": user_prompt}
+    ]
+    # 2. Prompt the model with tools defined
+    client = OpenAI(
+        api_key = OPENAI_API_KEY,
+    )
+    response = client.responses.create(
+        model="gpt-4.1",
+        tools=WEATHER_TOOLS,
+        input=input_list,
+    )
+    input_list+=response.output
+    #print(response.output)
+    for item in response.output:
+        if item.type == "function_call":
+            if item.name == "get_weather_data":
+                argument_dict = json.loads(item.arguments)
+                weather_data = get_weather_data(argument_dict['latitude'], argument_dict['longitude'])
+                input_list.append({
+                    "type": "function_call_output",
+                    "call_id": item.call_id,
+                    "output": json.dumps({
+                        "weather_data": weather_data
+                    })
+                })
+        else:
+            return "LLM is responding without weather tool."
+    response = client.responses.create(
+        model="gpt-4.1",
+        instructions="Answer prompt using weather tool. If error is seen please display error message shown by the OpenWeatherMap api. Be wary that units are displayed in imperial units.If successfully retrieved weather information then cite the page you used to retrieve the information.",
+        tools=WEATHER_TOOLS,
+        input=input_list,
+    )
+    return response.output_text
 if __name__ == "__main__":
     #print(wikipedia_function_call("Can you pass me the ketchup?"))
     #print(wikipedia_function_call("Linear Algebra"))
     #print(news_function_call("Can you pass the salt?"))
-    print(type(get_weather_data(40.758896, -73.985130)))
+    #weather_dict = get_weather_data(40.758896, -73.985130)
+    print(weather_function_call("what is the weather in saint etienne, france?"))
