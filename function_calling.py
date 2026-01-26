@@ -216,4 +216,4 @@ if __name__ == "__main__":
     #print(wikipedia_function_call("Linear Algebra"))
     #print(news_function_call("Can you pass the salt?"))
     #weather_dict = get_weather_data(40.758896, -73.985130)
-    print(weather_function_call("what is the weather in saint etienne, france?"))
+    print(weather_function_call("what is the weather in Sochi, fRussia?"))

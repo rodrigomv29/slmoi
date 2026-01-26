@@ -115,10 +115,7 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None, is_m
 
         outp = function_calling.news_function_call(inp)
         if is_markdown:
-            outp = Markup(markdown.markdown(outp))
-        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
-        insert_conversation_history(BASE_DIR, inp, date, user_name, outp)
+            outp = Markup(markdown.markdown(outp))       
         return outp
     # LLM function call for reading wikipedia articles
     elif fun_call==3:
@@ -126,14 +123,14 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None, is_m
         outp = function_calling.wikipedia_function_call(inp)
         if is_markdown:
             outp = Markup(markdown.markdown(outp))
-        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
-        insert_conversation_history(BASE_DIR, inp, date, user_name, outp)
         return outp
     # WIKIPEDIA
     elif fun_call==4:
         # refer to function_calling.py
-        pass
+        outp=function_calling.weather_function_call(inp)
+        if is_markdown:
+            outp = Markup(markdown.markdown(outp))
+        return outp
 def parse_news_obj(news):
     inside_brackets=False
     inside_url=False
@@ -309,7 +306,11 @@ def index():
         user_input = request.form.get("user_input")
         user_name = request.form.get('user_name')
         if request.form.get("function_calling")=="Weather":
-            pass
+            news_function_call=False
+            weather_ouput = get_llama_output(user_input, user_name, fun_call=4,is_markdown=True)
+            conv_object = Conversation(user_input, weather_ouput, is_news=False)
+            conversations.append(conv_object)
+            return render_template('index.html', user_input=user_input, conversations=conversations, openai_version=openai_version, news_function_call=news_function_call, )     
         if request.form.get("function_calling") == "News":
             news_function_call=True
             news_list = get_llama_output(user_input, user_name, fun_call=2,is_markdown=True)
