@@ -196,3 +196,9 @@ Dockerfile
 
 #admin credentials
 admin_credentials.txt
+
+# Ignore markdown files except README, CONTRIBUTING, and CHANGELOG
+*.md
+!README.md
+!CONTRIBUTING.md
+!CHANGELOG.md

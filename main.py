@@ -105,18 +105,44 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None, is_m
         return outp
     #LLM function call for fetching news
     elif fun_call==2:
-        if not socket.gethostname() == os.getenv("HOSTNAME"):
+        # Try to fetch from AWS S3 cache first (works around News API localhost restriction)
+        try:
             aws_client = news_generator.initialize_boto_client()
             file_key = news_generator.get_most_recent_news(aws_client)
-            sol = news_generator.show_contents_of_file(aws_client, file_key)
-            output_list = parse_news_obj(sol)
-            print(type(output_list))
-            return output_list
 
-        outp = function_calling.news_function_call(inp)
-        if is_markdown:
-            outp = Markup(markdown.markdown(outp))       
-        return outp
+            if file_key is not None:
+                # Check if cached news is recent (less than 6 hours old)
+                sol = news_generator.show_contents_of_file(aws_client, file_key)
+                output_list = parse_news_obj(sol)
+
+                # If we have valid cached news, use LLM to process it
+                if output_list and len(output_list) > 0:
+                    # Format for LLM processing
+                    news_text = "\n\n".join([f"{news.get_title()}\n{news.get_source()}\n{news.get_url()}"
+                                           for news in output_list])
+
+                    client_llm = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+                    completion = client_llm.responses.create(
+                        model="gpt-4.1",
+                        input=inp + f"\n\nHere are the latest news headlines:\n{news_text}",
+                        instructions="Summarize the news headlines based on the user's request. Separate every headline into its own paragraph."
+                    )
+                    outp = completion.output[0].content[0].text
+                    if is_markdown:
+                        outp = Markup(markdown.markdown(outp))
+                    return outp
+        except Exception as e:
+            print(f"S3 cache fetch failed: {e}")
+
+        # Fallback: Try direct API call (only works on localhost for free tier)
+        try:
+            outp = function_calling.news_function_call(inp)
+            if is_markdown:
+                outp = Markup(markdown.markdown(outp))
+            return outp
+        except Exception as e:
+            print(f"News API call failed: {e}")
+            return "Unable to fetch news at this time. Please try again later or contact support."
     # LLM function call for reading wikipedia articles
     elif fun_call==3:
         # refer to function_calling.py

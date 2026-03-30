@@ -12,15 +12,21 @@ A minimal flask app that integrates openai large language model with several api
 1. Clone the repository:
    ```bash
    git clone https://github.com/rodrigomv29/slmoi.git
+   cd slmoi
    ```
 2. Install dependencies:
    ```bash
    pip install -r requirements.txt
    ```
-3. Create a dot env file and set your api key variable as OPENAI_API_KEY inside the dot env file
+3. Set up environment variables:
    ```bash
-   touch .env && echo "OPENAI_API_KEY=<YOUR API KEY HERE>" >> .env
+   cp .env.example .env
    ```
+   Then edit `.env` and add your API keys:
+   - **OPENAI_API_KEY**: Get from https://platform.openai.com/api-keys
+   - **NEWS_API**: Get from https://newsapi.org/register
+   - **OPENWEATHER_API_KEY**: Get from https://openweathermap.org/api
+   - See `.env.example` for all configuration options
 ## Usage
 Run the main application:
 ```bash
@@ -36,8 +42,13 @@ flask run
 
 To get started, simply clone the repository, install the dependencies, and follow the usage instructions above. Enjoy experimenting and customizing the project to fit your needs!
 
+## Security
+
+**Important:** Never commit `.env` files or any files containing API keys. See [SECURITY.md](SECURITY.md) for detailed security guidelines.
+
 ## Contributing
-Pull requests are welcome.
+
+Pull requests are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md) before submitting.
 
 ## Donations
 LLM Credits, website hosting are funded through my personal budget. If you want to help me please consider donating.
