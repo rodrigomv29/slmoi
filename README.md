@@ -53,7 +53,5 @@ Pull requests are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) and [S
 ## Donations
 LLM Credits, website hosting are funded through my personal budget. If you want to help me please consider donating.
 
-[Buy me a coffee](https://buymeacoffee.com/rodrigo_morales)
-
 ## License
 This project is licensed under the GPL License.
