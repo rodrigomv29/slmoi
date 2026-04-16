@@ -6,151 +6,315 @@
     <link rel="icon" type="image/x-icon" href="../static/favicon.ico">
     <meta name="google-site-verification" content="5OMCisWdAGscgvcMBXymPM-7iAsaMFxsnmvVdu6YyPQ" />
     <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        /* ── Keyframes ── */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(100, 100, 255, 0.15); }
+            50%       { box-shadow: 0 0 0 8px rgba(100, 100, 255, 0); }
+        }
+
+        /* ── Base ── */
         body {
-            background-color: #2f2f2f;
-            color: #ffffff;
-            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #1e1e1e;
+            color: #e8e8e8;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            min-height: 100vh;
         }
-        .sidebar {
-            max-width: 10%;
-            font-size: 0.70em;
-            float: left;
-            padding: 2px;
-            background-color: #3a3a3a;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        }
-        .sidebar h2 {
-            font-size:  18px;
-        }
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
-            max-height: 75%;
-           
-        }
-        .sidebar ul li {
-            margin: 10px 0;
-        }
-        .sidebar ul li a {
-            color: #ffffff;
-            text-decoration: none;
-            font-size: 16px;
-        }
-        .sidebar ul li a:hover {
-            text-decoration: underline;
-        }
-        .welcome-page{
-            height: 100%;
-            width: 100%;
-            text-align: center;
-            background: linear-gradient(135deg, #2f2f2f 0%, #1a1a1a 100%);
-            padding: 50px 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            animation: fadeIn 2s ease-in-out;
-        }
-        .welcome-page h1{
-            font-size: 2.4em;
-            font-weight: bold;
-            color: #ffffff;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            margin-bottom: 20px;
-        }
-        .welcome-page h3{
-            font-size: 1.9em;
-            color: #cccccc;
-            margin-bottom: 30px;
-        }
-        .welcome-page p{
-            font-size: 1.4em;
-            line-height: 1.6;
-            color: #e0e0e0;
-            max-width: 800px;
-            margin: 0 auto 20px;
-        }
-        .main-page {
-            padding: 5% 0 0 0;
-            height: 100%;
-        }
-        .container {
-            max-width: 75%;
-            min-width: 50%;
-            margin: 40px auto;
-            padding: 20px;
-            background-color: #333333;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        }
-        .text-area {
-            width: 100%;
-            height: 100px;
-            padding: 10px;
-            font-size: 16px;
-            border: none;
-            border-radius: 10px;
-            background-color: #444444;
-            color: #ffffff;
-        }
-        .button {
-            width: 100%;
-            height: 40px;
-            padding: 10px;
-            font-size: 16px;
-            border: none;
-            border-radius: 10px;
-            background-color: #555555;
-            color: #ffffff;
-            cursor: pointer;
-        }
-        .container h1{
-            font-size: 1.25em;
-            padding: 10px 15px;
-        }
-        .button:hover {
-            background-color: #888;
-        }
-        .response {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #444444;
-            border-radius: 10px;
-        }
-        .radio-buttons {
-            background-color: #777;
-            color: #ffcccc;
-            padding: 0.5em;
-            font-size: 17px;
-            border: none;
-            border-radius: 10px;
 
-        }
-        .author-text{
-            font-size: 14px;
-            padding: 1px 2px;
-
-        }
+        /* ── Nav ── */
         nav {
-            background-color: #232323;
-            padding: 12px 0;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        }
-        nav div {
-            width: 80%;
-            margin: 0 auto;
+            background-color: #141414;
+            padding: 0 5%;
+            height: 56px;
             display: flex;
             align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            animation: fadeInDown 0.5s ease both;
         }
         nav a {
-            color: #fff;
+            color: #c9c9c9;
             text-decoration: none;
-            margin-right: 30px;
-            font-size: 18px;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: background 0.2s, color 0.2s;
         }
         nav a:hover {
-            text-decoration: underline;
+            background-color: #2d2d2d;
+            color: #ffffff;
+        }
+
+        /* ── Welcome banner ── */
+        .welcome-page {
+            text-align: center;
+            background: linear-gradient(135deg, #252525 0%, #161616 100%);
+            padding: 56px 24px 48px;
+            border-bottom: 1px solid #2e2e2e;
+            animation: fadeIn 0.8s ease both;
+        }
+        .welcome-page h1 {
+            font-size: clamp(1.8em, 4vw, 2.6em);
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+            margin: 0 0 12px;
+        }
+        .welcome-page h3 {
+            font-size: clamp(1em, 2.5vw, 1.4em);
+            color: #aaaaaa;
+            margin: 0 0 24px;
+            font-weight: 400;
+        }
+        .welcome-page p {
+            font-size: clamp(0.95em, 1.8vw, 1.1em);
+            line-height: 1.7;
+            color: #cccccc;
+            max-width: 760px;
+            margin: 0 auto 16px;
+        }
+        .welcome-page a {
+            color: #6ea8fe;
+            transition: color 0.2s;
+        }
+        .welcome-page a:hover { color: #9ec5ff; }
+
+        /* ── Main layout ── */
+        .main-page {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 32px auto;
+            padding: 0 24px;
+            animation: fadeInUp 0.6s ease 0.2s both;
+        }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            flex: 0 0 200px;
+            width: 200px;
+            background-color: #272727;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 20px 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 72px;
+            animation: slideInLeft 0.5s ease 0.3s both;
+        }
+        .sidebar h2 {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #888;
+            margin: 0 0 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar ul li {
+            margin: 4px 0;
+        }
+        .sidebar ul li a {
+            display: block;
+            color: #c8c8c8;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 7px 10px;
+            border-radius: 7px;
+            transition: background 0.18s, color 0.18s, transform 0.15s;
+        }
+        .sidebar ul li a:hover {
+            background-color: #333;
+            color: #ffffff;
+            transform: translateX(3px);
+        }
+
+        /* ── Chat area ── */
+        .chat-area {
+            flex: 1 1 0;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .container {
+            background-color: #272727;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+            transition: box-shadow 0.25s;
+        }
+        .container:focus-within {
+            box-shadow: 0 4px 24px rgba(80, 80, 200, 0.2);
+        }
+        .container h1 {
+            font-size: 1.1em;
+            margin: 0 0 16px;
+            color: #e0e0e0;
+        }
+        .container p {
+            font-size: 13px;
+            color: #999;
+            margin: 4px 0;
+        }
+
+        .text-area {
+            width: 100%;
+            height: 110px;
+            padding: 12px 14px;
+            font-size: 15px;
+            border: 1px solid #3d3d3d;
+            border-radius: 10px;
+            background-color: #1e1e1e;
+            color: #e8e8e8;
+            resize: vertical;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            margin-bottom: 12px;
+        }
+        .text-area:focus {
+            outline: none;
+            border-color: #5566aa;
+            box-shadow: 0 0 0 3px rgba(85, 102, 170, 0.2);
+        }
+
+        .radio-buttons {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+            background-color: #1e1e1e;
+            border: 1px solid #3d3d3d;
+            padding: 10px 14px;
+            font-size: 14px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            color: #d0d0d0;
+        }
+        .radio-buttons label {
+            cursor: pointer;
+            transition: color 0.15s;
+        }
+        .radio-buttons input[type="checkbox"] {
+            accent-color: #6ea8fe;
+            width: 15px;
+            height: 15px;
+            cursor: pointer;
+        }
+        .radio-buttons label:hover { color: #ffffff; }
+
+        .button {
+            width: 100%;
+            padding: 11px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            background-color: #3a3a5c;
+            color: #ffffff;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+            animation: pulse 2.5s infinite;
+        }
+        .button:hover {
+            background-color: #4e4e80;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(80, 80, 180, 0.3);
+        }
+        .button:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        .response {
+            margin-top: 16px;
+            padding: 16px;
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+            border-radius: 10px;
+            animation: fadeInUp 0.35s ease both;
+        }
+        .author-text {
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 6px 0;
+        }
+
+        /* ── Footer strip ── */
+        .footer-strip {
+            max-width: 1200px;
+            margin: 0 auto 32px;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: 13px;
+            color: #777;
+        }
+        .footer-strip a { color: #6ea8fe; transition: color 0.2s; }
+        .footer-strip a:hover { color: #9ec5ff; }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .main-page {
+                flex-direction: column;
+                padding: 0 16px;
+                margin: 20px auto;
+            }
+            .sidebar {
+                flex: none;
+                width: 100%;
+                position: static;
+                padding: 14px 16px;
+            }
+            .sidebar ul {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            .sidebar ul li { margin: 0; }
+            .sidebar ul li a { padding: 5px 10px; }
+            .footer-strip { padding: 0 16px; }
+            nav { padding: 0 16px; gap: 4px; }
+            nav a { font-size: 14px; padding: 5px 10px; }
+        }
+
+        @media (max-width: 480px) {
+            .welcome-page { padding: 36px 16px 32px; }
+            .container { padding: 16px; }
         }
     </style>
 </head>
@@ -171,72 +335,72 @@
         <p>Feel free to explore, chat with the AI, and see what emerges from this ongoing journey of discovery. Project is licensed under GPL license. Check out the Github repo: <a href="https://github.com/rodrigomv29/slmoi" style="color: #4CAF50;">here!</a></p>
     </div>
     <div class="main-page">
-            <div class="sidebar">
-                <h2>Chats</h2>
-                <ul>
-                    <li><a href="#">Chat 1</a></li>
-                    <li><a href="#">Chat 2</a></li>
-                    <li><a href="#">Chat 3</a></li>
-                    <li><a href="#">Chat 4</a></li>
-                    <li><a href="#">Chat 5</a></li>
-                    <li><a href="#">Chat 6</a></li>
-                    <li><a href="#">Chat 7</a></li>
-                    <li><a href="#">Chat 8</a></li>
-                    <li><a href="#">Chat 9</a></li>
-                    <li><a href="#">Chat 10</a></li>
-                </ul>
+        <div class="sidebar">
+            <h2>Chats</h2>
+            <ul>
+                <li><a href="#">Chat 1</a></li>
+                <li><a href="#">Chat 2</a></li>
+                <li><a href="#">Chat 3</a></li>
+                <li><a href="#">Chat 4</a></li>
+                <li><a href="#">Chat 5</a></li>
+                <li><a href="#">Chat 6</a></li>
+                <li><a href="#">Chat 7</a></li>
+                <li><a href="#">Chat 8</a></li>
+                <li><a href="#">Chat 9</a></li>
+                <li><a href="#">Chat 10</a></li>
+            </ul>
         </div>
-        <div class="container">
-            <h1>Hello, what would you like to know?</h1>
-            <p>Weather tool is under construction.</p>
-            <p>DISCLAIMER: PLEASE DON'T INSERT SENSISTIVE INFORMATION INTO THE PROMPT</p>
-            <form method="post">
-                <textarea class="text-area" name="user_input" placeholder="Talk to GPT-4"></textarea>
-                <input type="text" name="user_name" value="guest">
-                <div class="radio-buttons">
-                    <input type="checkbox" id="news" name="function_calling" value="News">
-                    <label for="news">News</label>
-                    <input type="checkbox" id="weather" name="function_calling" value="Weather">
-                    <label for="weather">Weather</label>
-                    <input type="checkbox" id="wikipedia" name="function_calling" value="Wikipedia">
-                    <label for="wikipedia">Wikipedia</label>
-                </div>
-                <button class="button" type="submit">Send</button>
-            </form>
-            {% if user_input%}
-                <div class="response">
-                {% for conversation in conversations %}
-                        <p class="author-text"><b>You:</b> {{conversation.user_input}}</p>
+
+        <div class="chat-area">
+            <div class="container">
+                <h1>Hello, what would you like to know?</h1>
+                <p>Weather tool is under construction.</p>
+                <p>&#9888; Do not insert sensitive information into the prompt.</p>
+                <form method="post">
+                    <textarea class="text-area" name="user_input" placeholder="Talk to GPT-4"></textarea>
+                    <input type="hidden" name="user_name" value="guest">
+                    <div class="radio-buttons">
+                        <input type="checkbox" id="news" name="function_calling" value="News">
+                        <label for="news">News</label>
+                        <input type="checkbox" id="weather" name="function_calling" value="Weather">
+                        <label for="weather">Weather</label>
+                        <input type="checkbox" id="wikipedia" name="function_calling" value="Wikipedia">
+                        <label for="wikipedia">Wikipedia</label>
+                    </div>
+                    <button class="button" type="submit">Send</button>
+                </form>
+                {% if user_input %}
+                    <div class="response">
+                    {% for conversation in conversations %}
+                        <p class="author-text"><b>You:</b> {{ conversation.user_input }}</p>
                         {% if conversation.is_list %}
-                            <p class="author-text"><b>GPT-4:</b></p><p> 
+                            <p class="author-text"><b>GPT-4:</b></p>
                             {% for news_obj in conversation.output %}
-                                {{news_obj}}
-                            </p>
+                                <p>{{ news_obj }}</p>
                             {% endfor %}
-
                         {% else %}
-                        <p class="author-text"><b>GPT-4:</b> {{conversation.output | safe}}</p>
+                            <p class="author-text"><b>GPT-4:</b> {{ conversation.output | safe }}</p>
                         {% endif %}
-                {% endfor %}
-                </div>
-            {% endif %}
+                    {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
 
+            <div class="container">
+                <form action='{{ url_for("clear_chat") }}' method="post">
+                    <button class="button" type="submit">Clear chat</button>
+                </form>
+            </div>
         </div>
-        <form class="container" action='{{ url_for("clear_chat") }}' method="post">
-            <button class="button">Clear chat</button>
+    </div>
 
-        </form>
-        <p>Users be wary that LLM outputs may be wrong. Please proceed with caution</p>
-        <div style="text-align:center; color:#fff; margin-top:20px;">
-            <small>OpenAI Python package version: {{ openai_version }}</small>
-        </div>
-        <span><a href="https://buymeacoffee.com/rodrigo_morales">Buy me a coffee:</a></span>
-        <!--
-        <div class="row-inputs">
-            <p>{{rows}}</p>
-        </div>
-        -->
-
+    <div class="footer-strip">
+        <span>&#9888; LLM outputs may be inaccurate — proceed with caution.</span>
+        <span>
+            <a href="https://buymeacoffee.com/rodrigo_morales">Buy me a coffee</a>
+            &nbsp;&middot;&nbsp;
+            <small>OpenAI pkg: {{ openai_version }}</small>
+        </span>
     </div>
     
 </body>
