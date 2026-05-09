@@ -32,6 +32,8 @@ app.secret_key = os.getenv("SECRET_KEY")
 llama_output = ""
 # conversations
 conversations = []
+# per-user chat history for the Chat Completions API
+conversation_histories = {}
 
 create_table="""
                 CREATE TABLE IF NOT EXISTS Accounts (
@@ -88,13 +90,14 @@ def get_llama_output(inp, user_name, fun_call=1, conversation_history=None, is_m
     #General use of an llm without any function calls
     if fun_call == 1:
         try:
-            completion = client.responses.create(
+            history = conversation_histories.setdefault(user_name, [])
+            history.append({"role": "user", "content": inp})
+            completion = client.chat.completions.create(
                 model="gpt-4.1",
-                input= inp,
-                instructions="You are an all around assistant."
-            )   
-            # Extract output from completion object
-            outp = completion.output[0].content[0].text
+                messages=[{"role": "system", "content": "You are an all around assistant."}] + history
+            )
+            outp = completion.choices[0].message.content
+            history.append({"role": "assistant", "content": outp})
         except Exception as e:
             outp = None  # or some fallback value
         if is_markdown:
