@@ -1,9 +1,10 @@
 import datetime
 class User:
-    def __init__(self, full_name, user_name, birthday, password, interests = []):
+    def __init__(self, full_name, user_name, email, birthday, password, interests = []):
         current_time = datetime.datetime.now()
         self.name = full_name
         self.user_name = user_name
+        self.email = email
         self.password = password
         self.birthday = birthday
         self.created_at = current_time.strftime('%Y-%m-%d_%H:%M:%S')

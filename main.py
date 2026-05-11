@@ -46,10 +46,15 @@ def ensure_users_table():
                     id SERIAL PRIMARY KEY,
                     full_name TEXT NOT NULL,
                     username TEXT NOT NULL UNIQUE,
+                    email TEXT NOT NULL UNIQUE,
                     password TEXT NOT NULL,
                     birthday DATE,
                     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
                 )
+            """)
+            # migrate existing deployments that predate the email column
+            cur.execute("""
+                ALTER TABLE users ADD COLUMN IF NOT EXISTS email TEXT UNIQUE
             """)
             conn.commit()
 
@@ -392,29 +397,38 @@ def register():
     if request.method=="POST":
         fullname = request.form.get("full-name")
         username = request.form.get("user-name")
+        email = request.form.get("email")
         birthday = request.form.get("birthday")
         password = request.form.get("pass-word")
         password2 = request.form.get("pass-word-2")
-        if password == password2:
-            try:
-                insert_register_data(fullname, username, password, birthday)
-                return redirect(url_for("sign_in"))
-            except Exception as e:
-                return render_template("register.html", error="Username already taken or registration failed.")
-        else:
+        if password != password2:
             return render_template("register.html", error="Passwords do not match.")
+        try:
+            insert_register_data(fullname, username, email, password, birthday)
+            return redirect(url_for("sign_in"))
+        except ValueError as e:
+            return render_template("register.html", error=str(e))
+        except Exception:
+            return render_template("register.html", error="Registration failed. Please try again.")
     return render_template("register.html")
 
-def insert_register_data(full_name, username, password, birthday):
+def insert_register_data(full_name, username, email, password, birthday):
     """Insert a new user into the PostgreSQL users table."""
+    if len(password) < 8:
+        raise ValueError("Password must be at least 8 characters.")
+    if "@" not in email:
+        raise ValueError("Please enter a valid email.")
     hashed = generate_password_hash(password)
-    with get_db_conn() as conn:
-        with conn.cursor() as cur:
-            cur.execute(
-                "INSERT INTO users (full_name, username, password, birthday) VALUES (%s, %s, %s, %s)",
-                (full_name, username, hashed, birthday)
-            )
-            conn.commit()
+    try:
+        with get_db_conn() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "INSERT INTO users (full_name, username, email, password, birthday) VALUES (%s, %s, %s, %s, %s)",
+                    (full_name, username, email, hashed, birthday)
+                )
+                conn.commit()
+    except psycopg.errors.UniqueViolation:
+        raise ValueError("Username or email already taken.")
 
 @app.route("/signin", methods=["GET", "POST"])
 def sign_in():
@@ -423,7 +437,7 @@ def sign_in():
     message = None
     user_valid = False
     if request.method == "POST":
-        pw = request.form.get("password")
+        pw = request.form.get("pass-word")
         un = request.form.get('user-name')
         try:
             with get_db_conn() as conn:
@@ -431,16 +445,15 @@ def sign_in():
                     cur.execute("SELECT password FROM users WHERE username = %s", (un,))
                     row = cur.fetchone()
                     if row and check_password_hash(row[0], pw):
-                        user_valid = True
-                        message = "Sign-in successful!"
                         session['user_valid'] = True
+                        session['username'] = un
                         session['last_activity'] = datetime.now().timestamp()
+                        return redirect(url_for("index"))
                     else:
                         message = "Invalid username or password."
-        except Exception as e:
-            user_valid = False
+        except Exception:
             message = "An error occurred during sign-in."
-        return render_template("signin.html", message=message, user_valid=user_valid)
+        return render_template("signin.html", message=message, user_valid=False)
     else:
         # Implement session timeout: log out after 3600 seconds of inactivity
         last_activity = session.get('last_activity')
