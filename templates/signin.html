@@ -9,7 +9,7 @@
             background-color: #2f2f2f;
             color: #ffffff;
             font-family: Arial, sans-serif;
-            
+
         }
         input {
             display: block;
@@ -22,6 +22,28 @@
         }
         a {
             text-decoration: none;
+        }
+        .error {
+            background-color: #d32f2f;
+            color: #fff;
+            padding: 12px;
+            border-radius: 4px;
+            margin: 10px 0;
+            display: none;
+        }
+        .error.show {
+            display: block;
+        }
+        .success {
+            background-color: #388e3c;
+            color: #fff;
+            padding: 12px;
+            border-radius: 4px;
+            margin: 10px 0;
+            display: none;
+        }
+        .success.show {
+            display: block;
         }
     </style>
 </head>
@@ -36,18 +58,20 @@
         </div>
     </nav>
     <h1>Sign in</h1>
-    <p>sign in feature is under construction</p>
+    {% if message and not user_valid %}
+    <div class="error show">{{ message }}</div>
+    {% elif message and user_valid %}
+    <div class="success show">{{ message }}</div>
+    {% endif %}
+
     <form method="post">
         <label for="username">Username</label>
-        <input type="text" name="user-name" id="username">
+        <input type="text" name="user-name" id="username" required>
         <label for="password">Password</label>
-        <input type="password" name="pass-word" id="password">
+        <input type="password" name="pass-word" id="password" required>
         <button type="submit">Sign in</button>
-        
     </form>
-    <p><a href="./register" >Register</a></p>
-
-    <span>Last Updated: </span>
+    <p><a href="./register" >Don't have an account? Register here</a></p>
     
 </body>
 </html>
