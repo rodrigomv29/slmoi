@@ -13,7 +13,7 @@ from botocore.exceptions import NoCredentialsError
 import function_calling
 import news_generator
 import socket
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 import psycopg
 from user import User
 
@@ -34,6 +34,24 @@ llama_output = ""
 conversations = []
 # per-user chat history for the Chat Completions API
 conversation_histories = {}
+
+def get_db_conn():
+    return psycopg.connect(os.getenv("DATABASE_URL"))
+
+def ensure_users_table():
+    with get_db_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS users (
+                    id SERIAL PRIMARY KEY,
+                    full_name TEXT NOT NULL,
+                    username TEXT NOT NULL UNIQUE,
+                    password TEXT NOT NULL,
+                    birthday DATE,
+                    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+            conn.commit()
 
 create_table="""
                 CREATE TABLE IF NOT EXISTS Accounts (
@@ -378,17 +396,25 @@ def register():
         password = request.form.get("pass-word")
         password2 = request.form.get("pass-word-2")
         if password == password2:
-            user = User(fullname, username, birthday, password)
-            print(user)
+            try:
+                insert_register_data(fullname, username, password, birthday)
+                return redirect(url_for("sign_in"))
+            except Exception as e:
+                return render_template("register.html", error="Username already taken or registration failed.")
         else:
-            print("passwords don't match")
-            return redirect(url_for("register"))    
+            return render_template("register.html", error="Passwords do not match.")
     return render_template("register.html")
 
-def insert_register_data(base, username, password, birthday):
-    """Insert registration data into the database (to be implemented)."""
-    # TODO FInish inserting to table
-    return 1
+def insert_register_data(full_name, username, password, birthday):
+    """Insert a new user into the PostgreSQL users table."""
+    hashed = generate_password_hash(password)
+    with get_db_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "INSERT INTO users (full_name, username, password, birthday) VALUES (%s, %s, %s, %s)",
+                (full_name, username, hashed, birthday)
+            )
+            conn.commit()
 
 @app.route("/signin", methods=["GET", "POST"])
 def sign_in():
@@ -400,18 +426,17 @@ def sign_in():
         pw = request.form.get("password")
         un = request.form.get('user-name')
         try:
-            db_path = os.path.join(BASE_DIR, "user_session.db")
-            with sqlite3.connect(db_path) as conn:
-                c = conn.cursor()
-                c.execute("SELECT * FROM sign_in_users WHERE username=? AND password=?", (un, pw))
-                user = c.fetchone()
-                if user:
-                    user_valid = True
-                    message = "Sign-in successful!"
-                    session['user_valid'] = True
-                    session['last_activity'] = datetime.now().timestamp()
-                else:
-                    message = "Invalid username or password."
+            with get_db_conn() as conn:
+                with conn.cursor() as cur:
+                    cur.execute("SELECT password FROM users WHERE username = %s", (un,))
+                    row = cur.fetchone()
+                    if row and check_password_hash(row[0], pw):
+                        user_valid = True
+                        message = "Sign-in successful!"
+                        session['user_valid'] = True
+                        session['last_activity'] = datetime.now().timestamp()
+                    else:
+                        message = "Invalid username or password."
         except Exception as e:
             user_valid = False
             message = "An error occurred during sign-in."
@@ -472,6 +497,6 @@ def admin():
         return render_template("admin.html", message=message, admin_valid=admin_valid)
 
 if __name__ == '__main__':
-    # Entry point for running the Flask app
+    ensure_users_table()
     app.run(debug=False)
     #init_db("rodrigo")
