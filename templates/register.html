@@ -5,71 +5,204 @@
     <title>Register</title>
     <link rel="icon" type="image/x-icon" href="../static/favicon.ico">
     <style>
-        body{
-            background-color: #2f2f2f;
-            color: #ffffff;
-            font-family: Arial, sans-serif;
+        *, *::before, *::after { box-sizing: border-box; }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
-         nav {
-            background-color: #232323;
-            padding: 12px 0;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
-        nav div {
-            width: 80%;
-            margin: 0 auto;
+
+        body {
+            margin: 0;
+            background-color: #1e1e1e;
+            color: #e8e8e8;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        nav {
+            background-color: #141414;
+            padding: 0 5%;
+            height: 56px;
             display: flex;
             align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            animation: fadeInDown 0.5s ease both;
         }
         nav a {
-            color: #fff;
+            color: #c9c9c9;
             text-decoration: none;
-            margin-right: 30px;
-            font-size: 18px;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: background 0.2s, color 0.2s;
         }
         nav a:hover {
-            text-decoration: underline;
+            background-color: #2d2d2d;
+            color: #ffffff;
         }
-        .error {
-            background-color: #d32f2f;
-            color: #fff;
-            padding: 12px;
-            border-radius: 4px;
-            margin: 10px 0;
-            display: none;
+
+        .page-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 24px;
+            animation: fadeInUp 0.5s ease 0.1s both;
         }
-        .error.show {
+
+        .auth-card {
+            background-color: #272727;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 40px 44px;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+        }
+        .auth-card h1 {
+            font-size: 1.6em;
+            color: #ffffff;
+            margin: 0 0 8px;
+        }
+        .auth-card .subtitle {
+            font-size: 13px;
+            color: #888;
+            margin: 0 0 28px;
+        }
+
+        .alert {
+            padding: 11px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+        .alert.error { background: #3a1a1a; color: #ffaaaa; border: 1px solid #6a2020; }
+
+        label {
             display: block;
+            font-size: 13px;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="date"] {
+            width: 100%;
+            padding: 10px 13px;
+            font-size: 14px;
+            background-color: #1e1e1e;
+            border: 1px solid #3d3d3d;
+            border-radius: 8px;
+            color: #e8e8e8;
+            margin-bottom: 18px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="date"]:focus {
+            outline: none;
+            border-color: #5566aa;
+            box-shadow: 0 0 0 3px rgba(85,102,170,0.2);
+        }
+        /* fix date picker icon colour in dark mode */
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.8); }
+
+        .btn {
+            width: 100%;
+            padding: 11px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            background-color: #3a3a5c;
+            color: #ffffff;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+            margin-top: 4px;
+        }
+        .btn:hover {
+            background-color: #4e4e80;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(80,80,180,0.3);
+        }
+        .btn:active { transform: translateY(0); box-shadow: none; }
+
+        .footer-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #777;
+        }
+        .footer-link a {
+            color: #6ea8fe;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .footer-link a:hover { color: #9ec5ff; }
+
+        @media (max-width: 480px) {
+            .auth-card { padding: 28px 20px; }
+            nav { padding: 0 16px; gap: 4px; }
+            nav a { font-size: 14px; padding: 5px 10px; }
         }
     </style>
 </head>
 <body>
     <nav>
-        <div>
-            <a href="/">Home</a>
-            <a href="/signin">Sign In</a>
-            <a href="/register">Register</a>
-            <a href="/admin">Admin</a>
-            <a href="https://rodrigomv29.github.io/">About Rodrigo</a>
-        </div>
+        <a href="/">Home</a>
+        <a href="/signin">Sign In</a>
+        <a href="/register">Register</a>
+        <a href="/admin">Admin</a>
+        <a href="https://rodrigomv29.github.io/">About Rodrigo</a>
     </nav>
-    <h1>Register</h1>
-    <p>Register an account with us!</p>
-    {% if error %}
-    <div class="error show">{{ error }}</div>
-    {% endif %}
 
-    <form method="post">
-        <label for="full-name"><input type="text" name="full-name" required>Full Name</label>
-        <label for="user-name"><input type="text" name="user-name" required>Username</label>
-        <label for="email"><input type="email" name="email" required>Email</label>
-        <label for="birthday"><input type="date" name="birthday" required>Date of Birth</label>
-        <label for="pass-word"><input type="password" name="pass-word" required>Password</label>
-        <label for="pass-word"><input type="password" name="pass-word-2" required>Reenter password</label>
-        <button type="submit">Register</button>
-        <p>Already have an account <a href="/signin">Sign in!</a></p>
-    </form>
-    <form action='{{url_for("init_db")}}' method="post"><button>test</button></form>
+    <div class="page-wrap">
+        <div class="auth-card">
+            <h1>Create Account</h1>
+            <p class="subtitle">Join us — it only takes a moment.</p>
+
+            {% if error %}
+            <div class="alert error">{{ error }}</div>
+            {% endif %}
+
+            <form method="post">
+                <label for="full-name">Full Name</label>
+                <input type="text" id="full-name" name="full-name" required autofocus>
+
+                <label for="user-name">Username</label>
+                <input type="text" id="user-name" name="user-name" required>
+
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="birthday">Date of Birth</label>
+                <input type="date" id="birthday" name="birthday" required>
+
+                <label for="pass-word">Password</label>
+                <input type="password" id="pass-word" name="pass-word" required>
+
+                <label for="pass-word-2">Confirm Password</label>
+                <input type="password" id="pass-word-2" name="pass-word-2" required>
+
+                <button class="btn" type="submit">Create Account</button>
+            </form>
+
+            <p class="footer-link">Already have an account? <a href="/signin">Sign in</a></p>
+        </div>
+    </div>
 </body>
 </html>

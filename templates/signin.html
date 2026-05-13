@@ -5,73 +5,189 @@
     <title>Sign In</title>
     <link rel="icon" type="image/x-icon" href="../static/favicon.ico">
     <style>
-        body{
-            background-color: #2f2f2f;
-            color: #ffffff;
-            font-family: Arial, sans-serif;
+        *, *::before, *::after { box-sizing: border-box; }
 
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
-        input {
-            display: block;
-            margin: 4px 5px 4px 3px;
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
-        label{
+
+        body {
             margin: 0;
-            padding: 0;
-            color: gray;
+            background-color: #1e1e1e;
+            color: #e8e8e8;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
-        a {
+
+        nav {
+            background-color: #141414;
+            padding: 0 5%;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            animation: fadeInDown 0.5s ease both;
+        }
+        nav a {
+            color: #c9c9c9;
             text-decoration: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: background 0.2s, color 0.2s;
         }
-        .error {
-            background-color: #d32f2f;
-            color: #fff;
-            padding: 12px;
-            border-radius: 4px;
-            margin: 10px 0;
-            display: none;
+        nav a:hover {
+            background-color: #2d2d2d;
+            color: #ffffff;
         }
-        .error.show {
+
+        .page-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 24px;
+            animation: fadeInUp 0.5s ease 0.1s both;
+        }
+
+        .auth-card {
+            background-color: #272727;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 40px 44px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+        }
+        .auth-card h1 {
+            font-size: 1.6em;
+            color: #ffffff;
+            margin: 0 0 8px;
+        }
+        .auth-card .subtitle {
+            font-size: 13px;
+            color: #888;
+            margin: 0 0 28px;
+        }
+
+        .alert {
+            padding: 11px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+        .alert.error   { background: #3a1a1a; color: #ffaaaa; border: 1px solid #6a2020; }
+        .alert.success { background: #1a3a1a; color: #aaffaa; border: 1px solid #206a20; }
+
+        label {
             display: block;
+            font-size: 13px;
+            color: #aaa;
+            margin-bottom: 5px;
         }
-        .success {
-            background-color: #388e3c;
-            color: #fff;
-            padding: 12px;
-            border-radius: 4px;
-            margin: 10px 0;
-            display: none;
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px 13px;
+            font-size: 14px;
+            background-color: #1e1e1e;
+            border: 1px solid #3d3d3d;
+            border-radius: 8px;
+            color: #e8e8e8;
+            margin-bottom: 18px;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
-        .success.show {
-            display: block;
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #5566aa;
+            box-shadow: 0 0 0 3px rgba(85,102,170,0.2);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 11px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            background-color: #3a3a5c;
+            color: #ffffff;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+            margin-top: 4px;
+        }
+        .btn:hover {
+            background-color: #4e4e80;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(80,80,180,0.3);
+        }
+        .btn:active { transform: translateY(0); box-shadow: none; }
+
+        .footer-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #777;
+        }
+        .footer-link a {
+            color: #6ea8fe;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .footer-link a:hover { color: #9ec5ff; }
+
+        @media (max-width: 480px) {
+            .auth-card { padding: 28px 20px; }
+            nav { padding: 0 16px; gap: 4px; }
+            nav a { font-size: 14px; padding: 5px 10px; }
         }
     </style>
 </head>
 <body>
     <nav>
-        <div>
-            <a href="/">Home</a>
-            <a href="/signin">Sign In</a>
-            <a href="/register">Register</a>
-            <a href="/admin">Admin</a>
-            <a href="https://rodrigomv29.github.io/">About Rodrigo</a>
-        </div>
+        <a href="/">Home</a>
+        <a href="/signin">Sign In</a>
+        <a href="/register">Register</a>
+        <a href="/admin">Admin</a>
+        <a href="https://rodrigomv29.github.io/">About Rodrigo</a>
     </nav>
-    <h1>Sign in</h1>
-    {% if message and not user_valid %}
-    <div class="error show">{{ message }}</div>
-    {% elif message and user_valid %}
-    <div class="success show">{{ message }}</div>
-    {% endif %}
 
-    <form method="post">
-        <label for="username">Username</label>
-        <input type="text" name="user-name" id="username" required>
-        <label for="password">Password</label>
-        <input type="password" name="pass-word" id="password" required>
-        <button type="submit">Sign in</button>
-    </form>
-    <p><a href="./register" >Don't have an account? Register here</a></p>
-    
+    <div class="page-wrap">
+        <div class="auth-card">
+            <h1>Sign In</h1>
+            <p class="subtitle">Welcome back — sign in to your account.</p>
+
+            {% if message and not user_valid %}
+            <div class="alert error">{{ message }}</div>
+            {% elif message and user_valid %}
+            <div class="alert success">{{ message }}</div>
+            {% endif %}
+
+            <form method="post">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="user-name" required autofocus>
+
+                <label for="password">Password</label>
+                <input type="password" id="password" name="pass-word" required>
+
+                <button class="btn" type="submit">Sign In</button>
+            </form>
+
+            <p class="footer-link">Don't have an account? <a href="/register">Register here</a></p>
+        </div>
+    </div>
 </body>
 </html>
