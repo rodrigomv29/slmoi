@@ -332,6 +332,25 @@ def insert_signin_data(base, un, pw):
     except Exception as e:
         return f"Error saving login data to S3: {e}"
 
+def get_users_admin():
+    """Fetch all users from PostgreSQL for the admin dashboard."""
+    with get_db_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT id, full_name, username, email, birthday, created_at FROM users ORDER BY created_at DESC")
+            return cur.fetchall()
+
+def get_conversations_admin():
+    """Fetch all conversations from SQLite for the admin dashboard."""
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.join(BASE_DIR, "conversations.db")
+    try:
+        with sqlite3.connect(db_path) as conn:
+            c = conn.cursor()
+            c.execute("SELECT id, user_name, input_text, output, date FROM conversation ORDER BY id DESC")
+            return c.fetchall()
+    except sqlite3.OperationalError:
+        return []
+
 def select_prompts(base, query="prompts"):
     """Select prompts or sign-in data from the appropriate database table."""
     if query == "prompts":    
@@ -471,43 +490,47 @@ def sign_in():
 
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
-    """Route for admin sign-in. Handles admin signin form submission and session management."""
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    prompt_table = select_prompts(BASE_DIR)
+    """Admin dashboard: sign-in and data views for users and conversations."""
     message = None
-    admin_valid = False
+
     if request.method == "POST":
-        pw = request.form.get("password")
         un = request.form.get("username")
-        try:
-            # db_path = os.path.join(BASE_DIR, "user_session.db")
-            actual_admin_un = os.getenv("ADMIN_USER")
-            actual_admin_pw = os.getenv("ADMIN_PASSWORD")
-            if un == actual_admin_un and pw==actual_admin_pw:
-                admin_valid = True
-                message = "Sign-in successful!"
-                session['admin_valid'] = True
-                session['last_activity'] = datetime.now().timestamp()
-            else:
-                message = "Invalid username or password."
-        except Exception as e:
+        pw = request.form.get("password")
+        if un == os.getenv("ADMIN_USER") and pw == os.getenv("ADMIN_PASSWORD"):
+            session['admin_valid'] = True
+            session['admin_last_activity'] = datetime.now().timestamp()
+            return redirect(url_for("admin"))
+        return render_template("admin.html", message="Invalid username or password.", admin_valid=False)
+
+    # GET — check session and timeout
+    admin_valid = session.get('admin_valid', False)
+    last_activity = session.get('admin_last_activity')
+    if last_activity:
+        now = datetime.now().timestamp()
+        if now - last_activity > 3600:
+            session.pop('admin_valid', None)
+            session.pop('admin_last_activity', None)
             admin_valid = False
-            message = "An error occurred during sign-in."
-        return render_template("admin.html", message=message, admin_valid=admin_valid, prompt_table=prompt_table)
-    else:
-        # Implement session timeout: log out after 3600 seconds of inactivity
-        last_activity = session.get('last_activity')
-        if last_activity:
-            now = datetime.now().timestamp()
-            if now - last_activity > 3600:
-                session.pop('admin_valid', None)
-                session.pop('last_activity', None)
-                message = "Session timed out. Please sign in again."
-                admin_valid = False
-            else:
-                session['last_activity'] = now
-                admin_valid = session.get('admin_valid', False)
-        return render_template("admin.html", message=message, admin_valid=admin_valid)
+            message = "Session timed out. Please sign in again."
+        else:
+            session['admin_last_activity'] = now
+
+    users, conversations = [], []
+    if admin_valid:
+        try:
+            users = get_users_admin()
+        except Exception:
+            users = []
+        conversations = get_conversations_admin()
+
+    return render_template("admin.html", message=message, admin_valid=admin_valid,
+                           users=users, conversations=conversations)
+
+@app.route("/admin/logout", methods=["POST"])
+def admin_logout():
+    session.pop('admin_valid', None)
+    session.pop('admin_last_activity', None)
+    return redirect(url_for("admin"))
 
 if __name__ == '__main__':
     ensure_users_table()
